@@ -5,8 +5,8 @@ import { Header } from './views/components/Header/Header';
 function App() {
   return (
     <div>
-      <Header />
       <Container>
+      <Header />
         <Routes>
           <Route index element={<>Landing Page</>} />
           <Route path="about-us" element={<>About Us Page</>} />
