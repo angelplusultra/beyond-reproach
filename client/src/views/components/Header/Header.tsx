@@ -1,10 +1,17 @@
 import { NavLink } from 'react-router-dom';
+import { useDrawer } from '../../../state/drawer/drawer';
 
 export function Header() {
+  const { drawer, toggleDrawer } = useDrawer();
   return (
     <div className="">
-      <ul className="lg:flex md:items-center md:justify-between py-5 px-24 font-extralight text-beyond-primary bg-beyond-brown">
-        <div className="text-3xl font-light hidden lg:block">Beyond Reproach</div>
+      <ul className="flex items-center justify-between py-5 px-24 font-extralight text-beyond-primary bg-beyond-brown">
+        <div className="text-3xl font-light">
+          <div onClick={toggleDrawer} className="lg:hidden">
+            Menu
+          </div>
+          <div className="hidden lg:block">Beyond Reproach</div>
+        </div>
         <div className="flex gap-10 items-center justify-center text-lg">
           <li className="hidden lg:block">
             <NavLink to="/how-it-works" className="group transition duration-300">

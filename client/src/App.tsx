@@ -1,12 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
 import { Container } from './views/components/Container/Container';
 import { Header } from './views/components/Header/Header';
+import { Drawer } from './views/components/Drawer/Drawer';
 
 function App() {
   return (
     <div>
       <Container>
-      <Header />
+        <Header />
+        <Drawer />
         <Routes>
           <Route index element={<>Landing Page</>} />
           <Route path="about-us" element={<>About Us Page</>} />
