@@ -5,6 +5,8 @@ export default {
     extend: {
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        italiana: ['Italiana']
       },
 
       colors: {
@@ -12,9 +14,9 @@ export default {
         'beyond-primary': '#1D1D1B',
         'beyond-light': '#EDEBE8',
         'beyond-darkgreen': '#79867B',
-        'beyond-brown': '#BEAE97',
-      },
-    },
+        'beyond-brown': '#BEAE97'
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 };
