@@ -2,18 +2,26 @@ namespace API {
   type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
   type SheetType = 'meal' | 'bundle';
 
-  interface Context<T> {
+  interface Context<Body> {
     request: {
-      body: T;
+      body: Body;
+
     };
+    params: {
+      id: string
+    }
   }
-  interface CreateNewMealSheetRequestBody {
+
+  interface CreateNewCartItemMealRequestBody {
     meal: number;
-    accomodate_allergies: number[];
+    accommodate_allergies: number[];
     quantity: number;
     protein: number;
-    daySheet: string;
+    cartDayId: string;
     type: 'lunch' | 'dinner';
+  }
+  interface UpdateCartItemMealRequestBody {
+    mealItemId: string
   }
 }
 

@@ -28,12 +28,6 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::protein.protein"
-    },
-    "cart_day": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::cart-day.cart-day",
-      "inversedBy": "dinners"
     }
   }
 }

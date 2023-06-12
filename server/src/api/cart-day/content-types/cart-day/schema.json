@@ -15,20 +15,17 @@
     "lunches": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::cart-item-meal.cart-item-meal",
-      "mappedBy": "cart_day"
+      "target": "api::cart-item-meal.cart-item-meal"
     },
     "dinners": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::cart-item-meal.cart-item-meal",
-      "mappedBy": "cart_day"
+      "target": "api::cart-item-meal.cart-item-meal"
     },
     "bundles": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::cart-item-bundle.cart-item-bundle",
-      "mappedBy": "cart_day"
+      "target": "api::cart-item-bundle.cart-item-bundle"
     },
     "snacks": {
       "type": "relation",

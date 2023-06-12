@@ -38,19 +38,29 @@ export default {
         });
 
         const mondaySheet = await cartDay.create({
-          data: {}
+          data: {
+            day: 'monday'
+          }
         });
         const tuesdaySheet = await cartDay.create({
-          data: {}
+          data: {
+            day: 'tuesday'
+          }
         });
         const wednesdaySheet = await cartDay.create({
-          data: {}
+          data: {
+            day: 'wednesday'
+          }
         });
         const thursdaySheet = await cartDay.create({
-          data: {}
+          data: {
+            day: 'thursday'
+          }
         });
         const fridaySheet = await cartDay.create({
-          data: {}
+          data: {
+            day: 'friday'
+          }
         });
 
         const sheets = {
