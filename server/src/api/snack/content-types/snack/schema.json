@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "snacks",
+  "info": {
+    "singularName": "snack",
+    "pluralName": "snacks",
+    "displayName": "Snack"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    }
+  }
+}

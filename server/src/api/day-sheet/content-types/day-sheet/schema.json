@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "day_sheets",
+  "info": {
+    "singularName": "day-sheet",
+    "pluralName": "day-sheets",
+    "displayName": "DaySheet",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "lunches": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::meal-sheet.meal-sheet",
+      "mappedBy": "day_sheet"
+    },
+    "dinners": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::meal-sheet.meal-sheet",
+      "mappedBy": "day_sheet"
+    },
+    "bundles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::bundle-sheet.bundle-sheet",
+      "mappedBy": "day_sheet"
+    },
+    "snack_01": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::snack.snack"
+    },
+    "snack_02": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::snack.snack"
+    },
+    "salad_01": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::salad.salad"
+    },
+    "salad_02": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::salad.salad"
+    },
+    "snack_01_quantity": {
+      "type": "integer"
+    },
+    "snack_02_quantity": {
+      "type": "integer"
+    },
+    "salad_01_quantity": {
+      "type": "integer"
+    },
+    "salad_02_quantity": {
+      "type": "integer"
+    },
+    "cart": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cart.cart"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "salads",
+  "info": {
+    "singularName": "salad",
+    "pluralName": "salads",
+    "displayName": "Salad"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    }
+  }
+}

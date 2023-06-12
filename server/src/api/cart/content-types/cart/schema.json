@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "carts",
+  "info": {
+    "singularName": "cart",
+    "pluralName": "carts",
+    "displayName": "Cart",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "monday": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::day-sheet.day-sheet"
+    },
+    "tuesday": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::day-sheet.day-sheet"
+    },
+    "wednesday": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::day-sheet.day-sheet"
+    },
+    "thursday": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::day-sheet.day-sheet"
+    },
+    "friday": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::day-sheet.day-sheet"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "cart"
+    }
+  }
+}

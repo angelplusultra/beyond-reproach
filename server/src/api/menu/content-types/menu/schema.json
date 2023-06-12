@@ -1,0 +1,116 @@
+{
+  "kind": "collectionType",
+  "collectionName": "menus",
+  "info": {
+    "singularName": "menu",
+    "pluralName": "menus",
+    "displayName": "Menu",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "monday_lunch": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "monday_dinner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "monday_bundle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::bundle.bundle"
+    },
+    "tuesday_lunch": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "tuesday_dinner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "tuesday_bundle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::bundle.bundle"
+    },
+    "wednesday_lunch": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "wednesday_dinner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "wednesday_bundle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::bundle.bundle"
+    },
+    "thursday_lunch": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "thursday_dinner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "thursday_bundle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::bundle.bundle"
+    },
+    "friday_lunch": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "friday_dinner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "friday_bundle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::bundle.bundle"
+    },
+    "release_date": {
+      "type": "date",
+      "required": true,
+      "unique": true
+    },
+    "snack_01": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::snack.snack"
+    },
+    "snack_02": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::snack.snack"
+    },
+    "salad_01": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::salad.salad"
+    },
+    "salad_02": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::salad.salad"
+    }
+  }
+}

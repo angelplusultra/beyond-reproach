@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "meal_sheets",
+  "info": {
+    "singularName": "meal-sheet",
+    "pluralName": "meal-sheets",
+    "displayName": "MealSheet",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "meal": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "quantity": {
+      "type": "integer"
+    },
+    "protein": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::protein.protein"
+    },
+    "accomodate_allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
+    },
+    "day_sheet": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::day-sheet.day-sheet",
+      "inversedBy": "dinners"
+    }
+  }
+}
