@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_item_meals",
+  "info": {
+    "singularName": "cart-item-meal",
+    "pluralName": "cart-item-meals",
+    "displayName": "CartItemMeal"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "meal": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "accommodate_allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
+    },
+    "qty": {
+      "type": "integer"
+    },
+    "protein": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::protein.protein"
+    },
+    "cart_day": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cart-day.cart-day",
+      "inversedBy": "dinners"
+    }
+  }
+}

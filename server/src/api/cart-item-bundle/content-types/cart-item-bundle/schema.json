@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_item_bundles",
+  "info": {
+    "singularName": "cart-item-bundle",
+    "pluralName": "cart-item-bundles",
+    "displayName": "CartItemBundle"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "bundle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::bundle.bundle"
+    },
+    "lunch_accommodate_allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
+    },
+    "lunch_protein": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::protein.protein"
+    },
+    "dinner_accommodate_allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
+    },
+    "dinner_protein": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::protein.protein"
+    },
+    "bundle_snack": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::snack.snack"
+    },
+    "qty": {
+      "type": "integer"
+    },
+    "cart_day": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cart-day.cart-day",
+      "inversedBy": "bundles"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_item_salads",
+  "info": {
+    "singularName": "cart-item-salad",
+    "pluralName": "cart-item-salads",
+    "displayName": "CartItemSalad"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "salad": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::salad.salad"
+    },
+    "qty": {
+      "type": "integer"
+    },
+    "cart_day": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cart-day.cart-day",
+      "inversedBy": "salads"
+    }
+  }
+}

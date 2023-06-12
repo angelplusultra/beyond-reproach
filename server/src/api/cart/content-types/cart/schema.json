@@ -12,36 +12,17 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "monday": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::day-sheet.day-sheet"
-    },
-    "tuesday": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::day-sheet.day-sheet"
-    },
-    "wednesday": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::day-sheet.day-sheet"
-    },
-    "thursday": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::day-sheet.day-sheet"
-    },
-    "friday": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::day-sheet.day-sheet"
-    },
     "user": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "cart"
+    },
+    "days": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-day.cart-day",
+      "mappedBy": "cart"
     }
   }
 }

@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_days",
+  "info": {
+    "singularName": "cart-day",
+    "pluralName": "cart-days",
+    "displayName": "CartDay",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "lunches": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item-meal.cart-item-meal",
+      "mappedBy": "cart_day"
+    },
+    "dinners": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item-meal.cart-item-meal",
+      "mappedBy": "cart_day"
+    },
+    "bundles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item-bundle.cart-item-bundle",
+      "mappedBy": "cart_day"
+    },
+    "snacks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item-snack.cart-item-snack",
+      "mappedBy": "cart_day"
+    },
+    "salads": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item-salad.cart-item-salad",
+      "mappedBy": "cart_day"
+    },
+    "cart": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cart.cart",
+      "inversedBy": "days"
+    },
+    "day": {
+      "type": "enumeration",
+      "enum": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday"
+      ]
+    }
+  }
+}

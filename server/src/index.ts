@@ -15,7 +15,7 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }: { strapi: Strapi.Strapi }) {
-    const daySheet = strapi.service('api::day-sheet.day-sheet');
+    const cartDay = strapi.service('api::cart-day.cart-day');
     const cart = strapi.service('api::cart.cart');
 
     strapi.db.lifecycles.subscribe({
@@ -27,56 +27,45 @@ export default {
           data: {
             //@ts-ignore
             user: event.result.id
-          }
-        });
-        const mondaySheet = await daySheet.create({
-          data: {
-            cart: myCart.id,
-            lunches: [],
-            dinners: [],
-            bundles: []
-          }
-        });
-        const tuesdaySheet = await daySheet.create({
-          data: {
-            cart: myCart.id,
-            lunches: [],
-            dinners: [],
-            bundles: []
-          }
-        });
-        const wednesdaySheet = await daySheet.create({
-          data: {
-            cart: myCart.id,
-            lunches: [],
-            dinners: [],
-            bundles: []
-          }
-        });
-        const thursdaySheet = await daySheet.create({
-          data: {
-            cart: myCart.id,
-            lunches: [],
-            dinners: [],
-            bundles: []
-          }
-        });
-        const fridaySheet = await daySheet.create({
-          data: {
-            cart: myCart.id,
-            lunches: [],
-            dinners: [],
-            bundles: []
+          },
+          populate: {
+            monday: true,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true
           }
         });
 
+        const mondaySheet = await cartDay.create({
+          data: {}
+        });
+        const tuesdaySheet = await cartDay.create({
+          data: {}
+        });
+        const wednesdaySheet = await cartDay.create({
+          data: {}
+        });
+        const thursdaySheet = await cartDay.create({
+          data: {}
+        });
+        const fridaySheet = await cartDay.create({
+          data: {}
+        });
+
+        const sheets = {
+          mondaySheet,
+          tuesdaySheet,
+          wednesdaySheet,
+          thursdaySheet,
+          fridaySheet
+        };
+
+        console.log(sheets);
+
         const updatedCart = await cart.update(myCart.id, {
           data: {
-            monday: mondaySheet.id,
-            tuesday: tuesdaySheet.id,
-            wednesday: wednesdaySheet.id,
-            thursday: thursdaySheet.id,
-            friday: fridaySheet.id
+            days: [mondaySheet.id, tuesdaySheet.id, wednesdaySheet.id, thursdaySheet.id, fridaySheet.id]
           },
           populate: {
             monday: true,
