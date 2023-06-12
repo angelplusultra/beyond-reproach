@@ -1,6 +1,5 @@
 namespace API {
   type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
-  type SheetType = 'meal' | 'bundle';
 
   interface Context<Body> {
     request: {
@@ -9,6 +8,16 @@ namespace API {
     };
     params: {
       id: string
+    }
+  }
+
+  namespace Auth {
+    interface UserAfterCreationLifecycleEvent {
+      result: {
+        id: number
+        username: string
+        password: string
+      }
     }
   }
 
