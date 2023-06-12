@@ -25,18 +25,18 @@ export function Drawer() {
             />
           </div>
         </div>
-        <div className="">
+        <div>
           <ul className=" text-beyond-primary divide-beyond-primary text-2xl divide-y">
             <li className="p-4" onClick={toggleDrawer}>
               <NavLink to="/about-us">About Us</NavLink>
             </li>
-            <li className="p-4">
+            <li onClick={toggleDrawer} className="p-4">
               <NavLink to="/how-it-works">How It Works</NavLink>
             </li>
-            <li className="p-4">
+            <li onClick={toggleDrawer} className="p-4">
               <NavLink to="/faq">FAQ</NavLink>
             </li>
-            <li className="p-4">
+            <li onClick={toggleDrawer} className="p-4">
               <NavLink to="/gallery">Gallery</NavLink>
             </li>
           </ul>

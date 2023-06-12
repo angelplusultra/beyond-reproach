@@ -6,7 +6,7 @@ export function Header() {
   const { toggleDrawer, drawer } = useDrawer();
   return (
     <div className="">
-      <ul className="flex items-center justify-between px-10 py-3 lg:py-5 lg:px-24  text-beyond-primary bg-beyond-brown">
+      <ul className="transition-all ease-linear duration-300 flex items-center justify-between py-3 lg:py-5 px-24  text-beyond-primary bg-beyond-brown">
         <div className=" font-light">
           <div className="lg:hidden">
             <Hamburger onToggle={toggleDrawer} toggled={drawer.isOpen} size={30} />
@@ -15,7 +15,13 @@ export function Header() {
             <h1 className="font-italiana text-4xl">Beyond Reproach</h1>
           </div>
         </div>
-        <div className="flex gap-16 items-center justify-center">
+        <div className="flex gap-10 items-center justify-center ">
+          <li className="hidden lg:block">
+            <NavLink to="/how-it-works" className="group transition duration-300">
+              Menu
+              <span className="block max-w-0 group-hover:max-w-full transition-all duration-200 h-0.5 bg-beyond-primary"></span>
+            </NavLink>
+          </li>
           <li className="hidden lg:block">
             <NavLink to="/how-it-works" className="group transition duration-300">
               How It Works
@@ -37,12 +43,6 @@ export function Header() {
           <li className="hidden lg:block">
             <NavLink to="/gallery" className="group transition duration-300">
               Gallery
-              <span className="block max-w-0 group-hover:max-w-full transition-all duration-200 h-0.5 bg-beyond-primary"></span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/signup" className="group transition duration-300">
-              Sign Up
               <span className="block max-w-0 group-hover:max-w-full transition-all duration-200 h-0.5 bg-beyond-primary"></span>
             </NavLink>
           </li>

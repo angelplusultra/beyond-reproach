@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 const initialState = {
-  isOpen: false,
+  isOpen: false
 };
 
 const drawerSlice = createSlice({
@@ -11,8 +11,8 @@ const drawerSlice = createSlice({
   reducers: {
     toggleDrawer: (state) => {
       state.isOpen = !state.isOpen;
-    },
-  },
+    }
+  }
 });
 
 export const drawerReducer = drawerSlice.reducer;
@@ -25,6 +25,6 @@ export const useDrawer = () => {
 
   return {
     drawer,
-    toggleDrawer,
+    toggleDrawer
   };
 };
