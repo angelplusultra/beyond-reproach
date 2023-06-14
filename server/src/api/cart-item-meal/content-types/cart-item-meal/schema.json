@@ -4,7 +4,8 @@
   "info": {
     "singularName": "cart-item-meal",
     "pluralName": "cart-item-meals",
-    "displayName": "CartItemMeal"
+    "displayName": "CartItemMeal",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -21,13 +22,23 @@
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
     },
-    "qty": {
+    "quantity": {
       "type": "integer"
     },
     "protein": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::protein.protein"
+    },
+    "cart_day": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cart-day.cart-day"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

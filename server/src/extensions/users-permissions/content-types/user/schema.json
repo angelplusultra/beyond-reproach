@@ -70,6 +70,22 @@
       "relation": "oneToOne",
       "target": "api::cart.cart",
       "mappedBy": "user"
+    },
+    "street": {
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": true
+    },
+    "zipcode": {
+      "type": "string",
+      "required": true
     }
   }
 }

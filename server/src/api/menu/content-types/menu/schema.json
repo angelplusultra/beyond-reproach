@@ -22,11 +22,6 @@
       "relation": "oneToOne",
       "target": "api::meal.meal"
     },
-    "monday_bundle": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::bundle.bundle"
-    },
     "tuesday_lunch": {
       "type": "relation",
       "relation": "oneToOne",
@@ -36,11 +31,6 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::meal.meal"
-    },
-    "tuesday_bundle": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::bundle.bundle"
     },
     "wednesday_lunch": {
       "type": "relation",
@@ -52,11 +42,6 @@
       "relation": "oneToOne",
       "target": "api::meal.meal"
     },
-    "wednesday_bundle": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::bundle.bundle"
-    },
     "thursday_lunch": {
       "type": "relation",
       "relation": "oneToOne",
@@ -66,11 +51,6 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::meal.meal"
-    },
-    "thursday_bundle": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::bundle.bundle"
     },
     "friday_lunch": {
       "type": "relation",
@@ -82,12 +62,7 @@
       "relation": "oneToOne",
       "target": "api::meal.meal"
     },
-    "friday_bundle": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::bundle.bundle"
-    },
-    "release_date": {
+    "start_date": {
       "type": "date",
       "required": true,
       "unique": true
@@ -111,6 +86,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::salad.salad"
+    },
+    "end_date": {
+      "type": "date",
+      "required": true,
+      "unique": true
     }
   }
 }
