@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_item_snacks",
+  "info": {
+    "singularName": "cart-item-snack",
+    "pluralName": "cart-item-snacks",
+    "displayName": "CartItemSnack"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "snack": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::snack.snack"
+    },
+    "qty": {
+      "type": "integer"
+    },
+    "cart_day": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cart-day.cart-day",
+      "inversedBy": "snacks"
+    }
+  }
+}

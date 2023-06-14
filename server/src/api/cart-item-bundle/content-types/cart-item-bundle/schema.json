@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_item_bundles",
+  "info": {
+    "singularName": "cart-item-bundle",
+    "pluralName": "cart-item-bundles",
+    "displayName": "CartItemBundle",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "lunch_accommodate_allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
+    },
+    "lunch_protein": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::protein.protein"
+    },
+    "dinner_accommodate_allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
+    },
+    "dinner_protein": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::protein.protein"
+    },
+    "bundle_snack": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::snack.snack"
+    },
+    "qty": {
+      "type": "integer"
+    },
+    "lunch": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "dinner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    }
+  }
+}
