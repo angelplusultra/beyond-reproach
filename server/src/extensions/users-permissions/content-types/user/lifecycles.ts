@@ -1,10 +1,6 @@
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
 export default {
-  async beforeCreate() {
-    const ctx = strapi.requestContext.get();
-    return ctx.response.badRequest('bad request');
-  },
   async afterCreate(event: API.Auth.UserAfterCreationLifecycleEvent) {
     const cartDay = strapi.service('api::cart-day.cart-day') as GenericService;
     const cart = strapi.service('api::cart.cart') as GenericService;
@@ -56,9 +52,7 @@ export default {
       fridaySheet
     };
 
-    console.log(sheets);
-
-    const updatedCart = await cart.update!(myCart.id, {
+    await cart.update!(myCart.id, {
       data: {
         days: [mondaySheet.id, tuesdaySheet.id, wednesdaySheet.id, thursdaySheet.id, fridaySheet.id]
       },
@@ -70,7 +64,5 @@ export default {
         friday: true
       }
     });
-
-    console.log(updatedCart);
   }
 };

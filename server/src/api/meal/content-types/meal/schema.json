@@ -23,7 +23,7 @@
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
     },
-    "accomodated_allergies": {
+    "accommodated_allergies": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::allergy.allergy"

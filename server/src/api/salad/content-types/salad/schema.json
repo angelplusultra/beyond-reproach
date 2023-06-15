@@ -4,7 +4,8 @@
   "info": {
     "singularName": "salad",
     "pluralName": "salads",
-    "displayName": "Salad"
+    "displayName": "Salad",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -13,6 +14,9 @@
   "attributes": {
     "title": {
       "type": "string"
+    },
+    "price": {
+      "type": "decimal"
     }
   }
 }

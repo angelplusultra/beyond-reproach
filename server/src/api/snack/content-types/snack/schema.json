@@ -4,7 +4,8 @@
   "info": {
     "singularName": "snack",
     "pluralName": "snacks",
-    "displayName": "Snack"
+    "displayName": "Snack",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -13,6 +14,9 @@
   "attributes": {
     "title": {
       "type": "string"
+    },
+    "price": {
+      "type": "decimal"
     }
   }
 }
