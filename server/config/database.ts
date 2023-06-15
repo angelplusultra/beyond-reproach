@@ -1,7 +1,9 @@
 import path from 'path';
 
+/* eslint-disable */
+
 export default ({ env }: { env: any }) => {
-  const client: any = env('DATABASE_CLIENT', 'sqlite');
+  const client: string = env('DATABASE_CLIENT', 'sqlite');
 
   const connections = {
     mysql: {

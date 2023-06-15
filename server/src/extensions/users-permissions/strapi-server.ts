@@ -1,42 +1,33 @@
 // src/extensions/users-permissions/strapi-server.js
 import user from './content-types/user';
-import controller from './controllers/controller';
-import middleware from './middlewares/middleware';
+import controller from './controllers/users';
+import middleware from './middlewares/users';
 
-export default (plugin: any) => {
+/* eslint-disable */
+
+export default (plugin: API.Auth.UsersPermissionsPlugin) => {
   plugin.contentTypes.user = user;
-  // const register = plugin.controllers.auth.register;
-
-  plugin.policies.validateBody = () => {
-    console.log('policy time');
-  };
-  // TODO CREATE A ROUTE AND CONTROLLER FOR POST-MEMBERSHIP SUBSCRIPTION SUCCESS
 
   plugin.controllers.auth.register = controller.register;
-  plugin.controllers.auth.test = async () => {
-    return 'Holy fuck it worked';
-  };
+  plugin.controllers.auth.onMembershipCheckoutSuccess = controller.onMembershipCheckoutSuccess;
 
-  const registerRoute = plugin.routes['content-api'].routes.find((route: any) => {
+  const registerRoute = plugin.routes['content-api'].routes.find((route) => {
     if (route.path === '/auth/local/register' && route.method === 'POST') {
       return route;
     }
   });
 
-  registerRoute.config.middlewares = [...registerRoute.config.middlewares, middleware.validateZipCode];
+  registerRoute &&
+    (registerRoute.config.middlewares = [...registerRoute.config.middlewares, middleware.validateZipCode]);
 
   plugin.routes['content-api'].routes.push({
     method: 'GET',
-    path: '/auth/test',
-    handler: 'auth.test',
+    path: '/auth/membership',
+    handler: 'auth.onMembershipCheckoutSuccess',
     config: {
       prefix: '',
-      middlewares: [
-        async (_: any, next: any) => {
-          console.log('Middleware!');
-          return next();
-        }
-      ]
+      auth: false,
+      middlewares: [middleware.validateCheckoutSession]
     }
   });
 

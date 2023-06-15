@@ -1,13 +1,39 @@
+/* eslint-disable */
 namespace API {
   type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
+  interface Route {
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    path: string;
+    handler: string;
+    config: {
+      middlewares: Middleware[];
+      auth: boolean;
+      prefix: string;
+    };
+  }
 
-  interface Context<Body> {
+  type Middleware = (ctx: Context<any, any>, next: import('connect').NextFunction) => Promise<void>;
+  interface RouteConfig {
+    auth: boolean;
+    prefix: string;
+    middlewares: Middleware[];
+  }
+  interface Context<Body = null, Query = null> {
     request: {
       body: Body;
+      query: Query;
+      url: string;
     };
     params: {
       id: string;
     };
+    state: {
+      auth: any;
+      session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
+    };
+    badRequest: (message: string, details?: object) => void;
+    redirect: (url: string) => void;
+    send: (data: any) => void;
   }
   namespace Cart {
     interface Cart {
@@ -45,12 +71,37 @@ namespace API {
   }
 
   namespace Auth {
+    interface UsersPermissionsPlugin {
+      controllers: {
+        auth: any;
+      };
+      contentTypes: {
+        user: any;
+      };
+      routes: {
+        'content-api': {
+          routes: Route[];
+        };
+      };
+    }
     interface UserAfterCreationLifecycleEvent {
       result: {
         id: number;
         username: string;
         password: string;
       };
+    }
+    interface RegisterNewUserRequestBody {
+      username: string;
+      email: string;
+      password: string;
+      street: string;
+      city: string;
+      state: string;
+      zipcode: string;
+    }
+    interface MembershipCheckoutSuccessQuery {
+      session_id?: string;
     }
   }
 
@@ -72,3 +123,5 @@ namespace Meal {
     id: number;
   }
 }
+
+declare module '@strapi/plugin-users-permissions/server/controllers/validation/auth';

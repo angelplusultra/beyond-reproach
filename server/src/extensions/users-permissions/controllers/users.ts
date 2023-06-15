@@ -1,20 +1,15 @@
 import utils from '@strapi/utils';
 import { getService } from '@strapi/plugin-users-permissions/server/utils';
 import _ from 'lodash';
-import Stripe from 'stripe';
-//@ts-ignore
+
 import { validateRegisterBody } from '@strapi/plugin-users-permissions/server/controllers/validation/auth';
+import { stripe } from '../../../../config/stripe';
 
 const { sanitize } = utils;
 
-const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY as string, {
-  apiVersion: '2022-11-15',
-  typescript: true
-});
-
 const { ApplicationError } = utils.errors;
 
-const sanitizeUser = (user: any, ctx: any) => {
+const sanitizeUser = (user: unknown, ctx: API.Context<API.Auth.RegisterNewUserRequestBody>) => {
   const { auth } = ctx.state;
   const userSchema = strapi.getModel('plugin::users-permissions.user');
 
@@ -22,7 +17,7 @@ const sanitizeUser = (user: any, ctx: any) => {
 };
 
 export default {
-  async register(ctx: any) {
+  async register(ctx: API.Context<API.Auth.RegisterNewUserRequestBody>) {
     const pluginStore = await strapi.store({ type: 'plugin', name: 'users-permissions' });
 
     const settings = await pluginStore.get({ key: 'advanced' });
@@ -57,8 +52,7 @@ export default {
     if (!role) {
       throw new ApplicationError('Impossible to find the default role');
     }
-    //@ts-ignore
-    const { email, username, provider } = params;
+    const { email, username, provider } = params as { email: string; username: string; provider: string };
 
     const identifierFilter = {
       $or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }, { username }, { email: username }]
@@ -97,8 +91,11 @@ export default {
     if (settings.email_confirmation) {
       try {
         await getService('user').sendConfirmationEmail(sanitizedUser);
-      } catch (err: any) {
-        throw new ApplicationError(err.message);
+      } catch (err) {
+        // ! KEEP AN EYE ON THIS
+        if (err instanceof Error) {
+          throw new ApplicationError(err.message);
+        }
       }
 
       return ctx.send({ user: sanitizedUser });
@@ -125,14 +122,34 @@ export default {
       payment_method_collection: 'always',
       discounts: [{ coupon: '4CtBgXun' }],
       currency: 'USD',
-      success_url: 'http://localhost:1337',
+      success_url: `${
+        process.env.SERVER_BASE_URL || 'http://localhost:1337'
+      }/api/auth/membership?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: 'http://localhost:1337'
     });
+    // TODO SESSION LINK AND JWT, FRONTEND WILL PUT JWT IN LS
     return ctx.send({
       session,
       customer,
       jwt,
       user: sanitizedUser
     });
+  },
+
+  async onMembershipCheckoutSuccess(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>) {
+    const users = strapi.db.query('plugin::users-permissions.user');
+    await users.update({
+      where: {
+        email: ctx.state.session?.customer_details?.email
+      },
+      data: {
+        role: 3
+      },
+      populate: { role: true }
+    });
+
+    // TODO REDIRECT USER BACK TO FRONTEND
+
+    return ctx.redirect('https://google.com');
   }
 };

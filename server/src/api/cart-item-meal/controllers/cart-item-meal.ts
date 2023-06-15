@@ -94,8 +94,7 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
           message: 'Meal item has been decremented'
         };
       } else if (meal && meal.quantity === 1) {
-        //@ts-ignore
-        const deletedMealItem = await mealItem.delete(meal.id, {});
+        await mealItem.delete!(meal.id as never, {});
 
         return 'Item has been completely Deleted';
       }
