@@ -117,10 +117,10 @@ export default {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customer.id,
-      line_items: [{ price: 'price_1NIUeUFaUiLwwnjTz6CE00Ze', quantity: 1 }],
+      line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
       payment_method_types: ['paypal', 'card', 'cashapp'],
       payment_method_collection: 'always',
-      discounts: [{ coupon: '4CtBgXun' }],
+      discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
       currency: 'USD',
       success_url: `${
         process.env.SERVER_BASE_URL || 'http://localhost:1337'

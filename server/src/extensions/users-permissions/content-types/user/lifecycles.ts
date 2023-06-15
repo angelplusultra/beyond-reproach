@@ -44,14 +44,6 @@ export default {
       }
     });
 
-    const sheets = {
-      mondaySheet,
-      tuesdaySheet,
-      wednesdaySheet,
-      thursdaySheet,
-      fridaySheet
-    };
-
     await cart.update!(myCart.id, {
       data: {
         days: [mondaySheet.id, tuesdaySheet.id, wednesdaySheet.id, thursdaySheet.id, fridaySheet.id]
