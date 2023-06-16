@@ -8,7 +8,7 @@ import middleware from '../middlewares/cart-item-meal';
 export default factories.createCoreRouter('api::cart-item-meal.cart-item-meal', {
   config: {
     create: {
-      middlewares: [middleware.validateDayCartOwnership]
+      middlewares: [middleware.validateCreateRequestBodySchema, middleware.validateDayCartOwnership]
     }
   }
 });
