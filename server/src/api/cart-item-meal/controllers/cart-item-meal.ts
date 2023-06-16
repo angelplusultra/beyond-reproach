@@ -5,44 +5,46 @@
 import { factories } from '@strapi/strapi';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
-// Must validate whether the subcart to be modified is owned by the user making the request, Middleware?
+//TODO Must validate whether the subcart to be modified is owned by the user making the request, Middleware?
 
 export default factories.createCoreController('api::cart-item-meal.cart-item-meal', ({ strapi }) => {
-  const mealItem = strapi.service('api::cart-item-meal.cart-item-meal') as GenericService;
-  const cartDay = strapi.service('api::cart-day.cart-day') as GenericService;
+  const mealItems = strapi.service('api::cart-item-meal.cart-item-meal') as GenericService;
+  const meals = strapi.service('api::meal.meal') as GenericService;
+  const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
 
   return {
-    async create(ctx: API.Context<API.CreateNewCartItemMealRequestBody>) {
-      //1. which day cart
-      // 2. Lunch or dinner
-      const { type } = ctx.request.body;
+    async create(ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>) {
+      const dayCart = ctx.state.user.dayCart;
 
-      const day: API.Cart.CartDay = await cartDay.findOne!(ctx.request.body.cartDayId, {
-        populate: {
-          lunches: true,
-          dinners: true,
-          bundles: true
-        }
-      });
-
-      if (!day) {
-        return 'Error: No Day';
+      if (!dayCart) {
+        return ctx.badRequest('Day Cart must be appended to the state object');
       }
-      const meal: API.Cart.CartMealItem = await mealItem.create!({
+
+      const meal = await meals.findOne!(ctx.request.body.meal, {});
+
+      if (!meal) {
+        return ctx.badRequest('No meal exists with the provided ID');
+      }
+      const newMealItem: API.Cart.CartMealItem = await mealItems.create!({
         data: {
-          ...ctx.request.body,
-          cart_day: day.id
+          meal: ctx.request.body.meal,
+          protein_substitute: ctx.request.body.protein_substitute || null,
+          accommodate_allergies: ctx.request.body.accommodate_allergies || null,
+          omitted_ingredients: ctx.request.body.omitted_ingredients || null,
+          quantity: ctx.request.body.quantity,
+          cart_day: dayCart.id,
+          user: ctx.state.user.id
         }
       });
       // Move to schema validation middleware
-      if (type !== 'lunch' && type !== 'dinner') {
-        return "Error: Type must be of type 'dinner' or 'lunch'";
-      }
+
+      console.log(dayCart);
+
       let updatedCartDay: API.Cart.CartDay;
-      if (ctx.request.body.type === 'dinner') {
-        updatedCartDay = await cartDay.update!(day.id, {
+      if (meal.type === 'dinner') {
+        updatedCartDay = await cartDays.update!(dayCart.id, {
           data: {
-            dinners: [...day.dinners, meal.id]
+            dinners: [...dayCart.dinners, newMealItem.id]
           },
           populate: {
             lunches: true,
@@ -52,10 +54,10 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
         });
 
         return updatedCartDay;
-      } else if (ctx.request.body.type === 'lunch') {
-        updatedCartDay = await cartDay.update!(day.id, {
+      } else if (meal.type === 'lunch') {
+        updatedCartDay = await cartDays.update!(dayCart.id, {
           data: {
-            lunches: [...day.lunches, meal.id]
+            lunches: [...dayCart.lunches, newMealItem.id]
           },
           populate: {
             lunches: true,
@@ -69,9 +71,9 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
     },
 
     async update(ctx: API.Context<null>) {
-      const meal: API.Cart.CartMealItem = await mealItem.findOne!(ctx.params.id, {});
+      const meal: API.Cart.CartMealItem = await mealItems.findOne!(ctx.params.id, {});
       if (meal) {
-        const updatedMeal: API.Cart.CartMealItem = await mealItem.update!(meal.id, {
+        const updatedMeal: API.Cart.CartMealItem = await mealItems.update!(meal.id, {
           data: {
             quantity: meal.quantity + 1
           }
@@ -80,10 +82,10 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
       }
     },
     async delete(ctx: API.Context<null>) {
-      const meal: API.Cart.CartMealItem = await mealItem.findOne!(ctx.params.id, {});
+      const meal: API.Cart.CartMealItem = await mealItems.findOne!(ctx.params.id, {});
 
       if (meal && meal.quantity > 1) {
-        const decrementedMealItem = await mealItem.update!(ctx.params.id, {
+        const decrementedMealItem = await mealItems.update!(ctx.params.id, {
           data: {
             quantity: meal.quantity - 1
           }
@@ -94,7 +96,7 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
           message: 'Meal item has been decremented'
         };
       } else if (meal && meal.quantity === 1) {
-        await mealItem.delete!(meal.id as never, {});
+        await mealItems.delete!(meal.id as never, {});
 
         return 'Item has been completely Deleted';
       }

@@ -3,8 +3,6 @@ import user from './content-types/user';
 import controller from './controllers/users';
 import middleware from './middlewares/users';
 
-/* eslint-disable */
-
 export default (plugin: API.Auth.UsersPermissionsPlugin) => {
   plugin.contentTypes.user = user;
 

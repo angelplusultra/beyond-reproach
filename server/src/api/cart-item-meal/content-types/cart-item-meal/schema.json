@@ -25,7 +25,7 @@
     "quantity": {
       "type": "integer"
     },
-    "protein": {
+    "protein_substitute": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::protein.protein"
@@ -39,6 +39,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "omitted_ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
     }
   }
 }

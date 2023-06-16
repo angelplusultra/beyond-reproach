@@ -62,11 +62,6 @@
       "relation": "oneToOne",
       "target": "api::meal.meal"
     },
-    "start_date": {
-      "type": "date",
-      "required": true,
-      "unique": true
-    },
     "snack_01": {
       "type": "relation",
       "relation": "oneToOne",
@@ -87,10 +82,8 @@
       "relation": "oneToOne",
       "target": "api::salad.salad"
     },
-    "end_date": {
-      "type": "date",
-      "required": true,
-      "unique": true
+    "release_date": {
+      "type": "datetime"
     }
   }
 }

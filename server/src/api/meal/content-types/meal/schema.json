@@ -28,10 +28,22 @@
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
     },
-    "proteins": {
+    "protein_substitutes": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::protein.protein"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "lunch",
+        "dinner"
+      ]
+    },
+    "omittable_ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
     }
   }
 }

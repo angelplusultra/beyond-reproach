@@ -29,6 +29,22 @@ namespace API {
     };
     state: {
       auth: any;
+      user: {
+        id: number;
+        username: string;
+        email: string;
+        password: string;
+        street: string;
+        city: string;
+        state: string;
+        zipcode: string;
+        dayCart?: Cart.CartDay;
+        role: {
+          id: number;
+          name: string;
+          description: string;
+        };
+      };
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
     };
     badRequest: (message: string, details?: object) => void;
@@ -42,6 +58,14 @@ namespace API {
       wednesday: DaySheet;
       thursday: DaySheet;
       friday: DaySheet;
+    }
+    interface CreateNewCartItemMealRequestBody {
+      meal: string;
+      accommodate_allergies: number[];
+      omitted_ingredients: number[];
+      quantity: number;
+      protein_substitute: number;
+      cart_day_id: string;
     }
 
     interface CartMealItem {
@@ -100,19 +124,12 @@ namespace API {
       state: string;
       zipcode: string;
     }
+
     interface MembershipCheckoutSuccessQuery {
       session_id?: string;
     }
   }
 
-  interface CreateNewCartItemMealRequestBody {
-    meal: number;
-    accommodate_allergies: number[];
-    quantity: number;
-    protein: number;
-    cartDayId: string;
-    type: 'lunch' | 'dinner';
-  }
   interface UpdateCartItemMealRequestBody {
     mealItemId: string;
   }

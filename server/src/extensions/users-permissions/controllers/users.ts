@@ -1,9 +1,11 @@
 import utils from '@strapi/utils';
 import { getService } from '@strapi/plugin-users-permissions/server/utils';
+import services from '../services/user';
 import _ from 'lodash';
 
 import { validateRegisterBody } from '@strapi/plugin-users-permissions/server/controllers/validation/auth';
 import { stripe } from '../../../../config/stripe';
+import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
 const { sanitize } = utils;
 
@@ -128,12 +130,15 @@ export default {
       cancel_url: 'http://localhost:1337'
     });
     // TODO SESSION LINK AND JWT, FRONTEND WILL PUT JWT IN LS
-    return ctx.send({
+
+    //@ts-ignore
+    ctx.send({
       session,
       customer,
-      jwt,
-      user: sanitizedUser
+      sanitizedUser,
+      jwt
     });
+    services.createCartRelations(sanitizedUser);
   },
 
   async onMembershipCheckoutSuccess(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>) {
@@ -151,5 +156,6 @@ export default {
     // TODO REDIRECT USER BACK TO FRONTEND
 
     return ctx.redirect('https://google.com');
-  }
+  },
+  async updateAddress(ctx: API.Context) {}
 };

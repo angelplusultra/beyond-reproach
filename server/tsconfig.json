@@ -4,9 +4,7 @@
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
-    "strictNullChecks": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true
+    "strictNullChecks": true
   },
   "include": ["./", "./**/*.ts", "./**/*.js", "src/**/*.json"],
   "exclude": ["node_modules/", "build/", "dist/", ".cache/", ".tmp/", "src/admin/", "**/*.test.*", "src/plugins/**"]
