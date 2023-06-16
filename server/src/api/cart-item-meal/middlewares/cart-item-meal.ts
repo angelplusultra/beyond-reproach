@@ -33,16 +33,18 @@ export default {
       protein_substitute: yup.number().typeError('protein_substitute must be number type'),
       accommodate_allergies: yup
         .array()
-        .of(yup.number().typeError('accommodate_allergies must be an array with only number types')),
+        .of(yup.number().typeError('accommodate_allergies must be an array with only number types'))
+        .typeError('accommodate_allergies must be an array with only number types'),
       omitted_ingredients: yup
         .array()
-        .of(yup.number().typeError('omitted_ingredients must be an array with only number types')),
-      cart_day_id: yup.number().required('cart_day_id must be number type'),
-      quantity: yup.number().required('quantity must be number type')
+        .of(yup.number().typeError('omitted_ingredients must be an array with only number types'))
+        .typeError('omitted_ingredients must be an array with only number types'),
+      cart_day_id: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type'),
+      quantity: yup.number().required('quantity is required').typeError('quantity must be number type')
     });
 
     try {
-      await createCartMealItemRequestBodySchema.validate(ctx.request.body);
+      await createCartMealItemRequestBodySchema.validate(ctx.request.body, {});
     } catch (error) {
       if (error instanceof Error) {
         return ctx.badRequest(error.message);

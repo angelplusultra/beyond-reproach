@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import { validateRegisterBody } from '@strapi/plugin-users-permissions/server/controllers/validation/auth';
 import { stripe } from '../../../../config/stripe';
-import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
 const { sanitize } = utils;
 
@@ -120,7 +119,7 @@ export default {
       mode: 'subscription',
       customer: customer.id,
       line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
-      payment_method_types: ['paypal', 'card', 'cashapp'],
+      payment_method_types: ['paypal', 'card'],
       payment_method_collection: 'always',
       discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
       currency: 'USD',
@@ -138,6 +137,7 @@ export default {
       sanitizedUser,
       jwt
     });
+
     services.createCartRelations(sanitizedUser);
   },
 
@@ -157,5 +157,5 @@ export default {
 
     return ctx.redirect('https://google.com');
   },
-  async updateAddress(ctx: API.Context) {}
+  async updateAddress() {}
 };
