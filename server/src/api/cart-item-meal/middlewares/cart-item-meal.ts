@@ -51,5 +51,26 @@ export default {
       }
     }
     return next();
+  },
+  async validateCartMealItemOwnership(ctx: API.Context, next: NextFunction) {
+    const mealItemId = ctx.params.id;
+
+    const mealItem: API.Cart.CartMealItem = await strapi.service('api::cart-item-meal.cart-item-meal')!.findOne!(
+      mealItemId,
+      {
+        populate: {
+          user: true
+        }
+      }
+    );
+
+    if (!mealItem) {
+      return ctx.badRequest('Meal Item does not exist');
+    }
+    if (mealItem.user.id !== ctx.state.user.id) {
+      return ctx.badRequest('You are not the owner of the provided Meal Item');
+    }
+
+    return next();
   }
 };

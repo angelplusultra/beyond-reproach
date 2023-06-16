@@ -86,6 +86,11 @@
     "zipcode": {
       "type": "string",
       "required": true
+    },
+    "allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
     }
   }
 }

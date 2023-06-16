@@ -17,7 +17,7 @@
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
     },
-    "lunch_protein": {
+    "lunch_protein_substitute": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::protein.protein"
@@ -27,7 +27,7 @@
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
     },
-    "dinner_protein": {
+    "dinner_protein_substitute": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::protein.protein"
@@ -37,7 +37,7 @@
       "relation": "oneToOne",
       "target": "api::snack.snack"
     },
-    "qty": {
+    "quantity": {
       "type": "integer"
     },
     "lunch": {
@@ -49,6 +49,16 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::meal.meal"
+    },
+    "lunch_omitted_ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
+    },
+    "dinner_omitted_ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
     }
   }
 }

@@ -48,6 +48,7 @@ namespace API {
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
     };
     badRequest: (message: string, details?: object) => void;
+    unauthorized: (message: string, details?: object) => void;
     redirect: (url: string) => void;
     send: (data: any) => void;
   }
@@ -75,6 +76,11 @@ namespace API {
       protein: number;
       accommodate_allergies: number[];
       cart_day: CartDay['id'];
+      user: {
+        id: number;
+        username: string;
+        password: string;
+      };
     }
     interface CartBundleItem {
       id: string;
@@ -95,6 +101,23 @@ namespace API {
   }
 
   namespace Auth {
+    interface User {
+      username: string;
+      email: string;
+      password: string;
+      provider: string;
+      resetPasswordToken: string;
+      confirmationToken: string;
+      confirmed: boolean;
+      blocked: boolean;
+      role?: number;
+      cart?: number;
+      allergies?: number[];
+      street: string;
+      city: string;
+      state: string;
+      zipcode: string;
+    }
     interface UsersPermissionsPlugin {
       controllers: {
         auth: any;
