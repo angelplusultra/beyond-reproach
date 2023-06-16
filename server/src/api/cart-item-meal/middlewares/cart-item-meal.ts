@@ -1,5 +1,7 @@
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 import { NextFunction } from 'connect';
+import * as yup from 'yup';
+
 export default {
   async validateDayCartOwnership(ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>, next: NextFunction) {
     const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
@@ -22,5 +24,30 @@ export default {
     return next();
   },
 
-  validateCreateRequestBodySchema() {}
+  async validateCreateRequestBodySchema(
+    ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>,
+    next: NextFunction
+  ) {
+    const createCartMealItemRequestBodySchema = yup.object({
+      meal: yup.number().required('meal is required').typeError('meal must be number type'),
+      protein_substitute: yup.number().typeError('protein_substitute must be number type'),
+      accommodate_allergies: yup
+        .array()
+        .of(yup.number().typeError('accommodate_allergies must be an array with only number types')),
+      omitted_ingredients: yup
+        .array()
+        .of(yup.number().typeError('omitted_ingredients must be an array with only number types')),
+      cart_day_id: yup.number().required('cart_day_id must be number type'),
+      quantity: yup.number().required('quantity must be number type')
+    });
+
+    try {
+      await createCartMealItemRequestBodySchema.validate(ctx.request.body);
+    } catch (error) {
+      if (error instanceof Error) {
+        return ctx.badRequest(error.message);
+      }
+    }
+    return next();
+  }
 };
