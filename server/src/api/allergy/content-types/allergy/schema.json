@@ -4,10 +4,11 @@
   "info": {
     "singularName": "allergy",
     "pluralName": "allergies",
-    "displayName": "Allergy"
+    "displayName": "Allergy",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {

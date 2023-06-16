@@ -4,7 +4,8 @@
   "info": {
     "singularName": "cart-item-snack",
     "pluralName": "cart-item-snacks",
-    "displayName": "CartItemSnack"
+    "displayName": "CartItemSnack",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -16,7 +17,7 @@
       "relation": "oneToOne",
       "target": "api::snack.snack"
     },
-    "qty": {
+    "quantity": {
       "type": "integer"
     },
     "cart_day": {

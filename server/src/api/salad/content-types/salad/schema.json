@@ -17,6 +17,11 @@
     },
     "price": {
       "type": "decimal"
+    },
+    "omittable_ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
     }
   }
 }
