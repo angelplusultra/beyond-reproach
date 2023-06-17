@@ -28,17 +28,15 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
       const newMealItem: API.Cart.CartMealItem = await mealItems.create!({
         data: {
           meal: ctx.request.body.meal,
-          protein_substitute: ctx.request.body.protein_substitute || null,
-          accommodate_allergies: ctx.request.body.accommodate_allergies || null,
-          omitted_ingredients: ctx.request.body.omitted_ingredients || null,
+          protein_substitute: ctx.request.body.protein_substitute,
+          accommodate_allergies: ctx.request.body.accommodate_allergies,
+          omitted_ingredients: ctx.request.body.omitted_ingredients,
           quantity: ctx.request.body.quantity,
           cart_day: dayCart.id,
           user: ctx.state.user.id
         }
       });
       // Move to schema validation middleware
-
-      console.log(dayCart);
 
       let updatedCartDay: API.Cart.CartDay;
       if (meal.type === 'dinner') {

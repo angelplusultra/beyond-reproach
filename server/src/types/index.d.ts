@@ -62,10 +62,10 @@ namespace API {
     }
     interface CreateNewCartItemMealRequestBody {
       meal: string;
-      accommodate_allergies: number[];
-      omitted_ingredients: number[];
+      accommodate_allergies?: number[];
+      omitted_ingredients?: number[];
       quantity: number;
-      protein_substitute: number;
+      protein_substitute?: number;
       cart_day_id: string;
     }
 
