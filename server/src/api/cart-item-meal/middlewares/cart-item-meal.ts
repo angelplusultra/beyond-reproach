@@ -9,7 +9,8 @@ export default {
       populate: {
         user: true,
         lunches: true,
-        dinners: true
+        dinners: true,
+        bundles: true
       }
     });
 
@@ -20,7 +21,7 @@ export default {
     if (subCart.user?.id !== ctx.state.user.id) {
       return ctx.badRequest('You are not the owner of the provided Sub Cart');
     }
-    ctx.state.user.dayCart = subCart;
+    ctx.state.user.cartDay = subCart;
     return next();
   },
 

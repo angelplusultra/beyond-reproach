@@ -14,9 +14,9 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
 
   return {
     async create(ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>) {
-      const dayCart = ctx.state.user.dayCart;
+      const cartDay = ctx.state.user.cartDay;
 
-      if (!dayCart) {
+      if (!cartDay) {
         return ctx.badRequest('Day Cart must be appended to the state object');
       }
 
@@ -32,7 +32,7 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
           accommodate_allergies: ctx.request.body.accommodate_allergies,
           omitted_ingredients: ctx.request.body.omitted_ingredients,
           quantity: ctx.request.body.quantity,
-          cart_day: dayCart.id,
+          cart_day: cartDay.id,
           user: ctx.state.user.id
         }
       });
@@ -40,9 +40,9 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
 
       let updatedCartDay: API.Cart.CartDay;
       if (meal.type === 'dinner') {
-        updatedCartDay = await cartDays.update!(dayCart.id, {
+        updatedCartDay = await cartDays.update!(cartDay.id, {
           data: {
-            dinners: [...dayCart.dinners, newMealItem.id]
+            dinners: [...cartDay.dinners, newMealItem.id]
           },
           populate: {
             lunches: true,
@@ -53,9 +53,9 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
 
         return updatedCartDay;
       } else if (meal.type === 'lunch') {
-        updatedCartDay = await cartDays.update!(dayCart.id, {
+        updatedCartDay = await cartDays.update!(cartDay.id, {
           data: {
-            lunches: [...dayCart.lunches, newMealItem.id]
+            lunches: [...cartDay.lunches, newMealItem.id]
           },
           populate: {
             lunches: true,

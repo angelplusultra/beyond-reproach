@@ -59,6 +59,11 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::ingredient.ingredient"
+    },
+    "cart_day": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cart-day.cart-day"
     }
   }
 }

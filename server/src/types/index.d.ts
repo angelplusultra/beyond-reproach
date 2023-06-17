@@ -38,7 +38,7 @@ namespace API {
         city: string;
         state: string;
         zipcode: string;
-        dayCart?: Cart.CartDay;
+        cartDay?: Cart.CartDay;
         role: {
           id: number;
           name: string;
@@ -84,13 +84,17 @@ namespace API {
     }
     interface CartBundleItem {
       id: string;
-      bundle: number;
+      lunch: number;
+      dinner: number;
       quantity: number;
-      lunch_protein: number;
-      dinner_protein: number;
-      lunch_accomodate_allergies: number[];
-      dinner_accomodate_allergies: number[];
-      snack: number;
+      bundle_snack: number;
+      lunch_protein_substitute?: number;
+      dinner_protein_substitute?: number;
+      lunch_accomodate_allergies?: number[];
+      dinner_accomodate_allergies?: number[];
+      lunch_omitted_ingredients?: number[];
+      dinner_omitted_ingredients?: number[];
+      cart_day: number;
     }
     interface CartDay {
       id: string;
