@@ -82,6 +82,20 @@ namespace API {
         password: string;
       };
     }
+
+    interface CreateNewCartItemBundleRequestBody {
+      lunch: string;
+      dinner: string;
+      quantity: number;
+      bundle_snack: number;
+      lunch_protein_substitute?: number;
+      dinner_protein_substitute?: number;
+      lunch_accomodate_allergies?: number[];
+      dinner_accomodate_allergies?: number[];
+      lunch_omitted_ingredients?: number[];
+      dinner_omitted_ingredients?: number[];
+      cart_day_id: string;
+    }
     interface CartBundleItem {
       id: string;
       lunch: number;
@@ -95,6 +109,11 @@ namespace API {
       lunch_omitted_ingredients?: number[];
       dinner_omitted_ingredients?: number[];
       cart_day: number;
+      user?: {
+        id: number;
+        username: string;
+        password: string;
+      };
     }
     interface CartDay {
       id: string;
