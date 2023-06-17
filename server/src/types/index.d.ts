@@ -82,6 +82,16 @@ namespace API {
         password: string;
       };
     }
+    interface CartItemSalad {
+      salad: number;
+      quantity: number;
+      omitted_ingredients: number[];
+      user?: {
+        id: number;
+        username: string;
+        password: string;
+      };
+    }
     interface CartBundleItem {
       id: string;
       lunch: number;
