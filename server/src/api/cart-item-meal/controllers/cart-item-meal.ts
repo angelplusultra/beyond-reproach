@@ -25,7 +25,7 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
       if (!meal) {
         return ctx.badRequest('No meal exists with the provided ID');
       }
-      const newMealItem: API.Cart.CartMealItem = await mealItems.create!({
+      const newMealItem: API.Cart.CartItemMeal = await mealItems.create!({
         data: {
           meal: ctx.request.body.meal,
           protein_substitute: ctx.request.body.protein_substitute,
@@ -69,9 +69,9 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
     },
 
     async update(ctx: API.Context<null>) {
-      const meal: API.Cart.CartMealItem = await mealItems.findOne!(ctx.params.id, {});
+      const meal: API.Cart.CartItemMeal = await mealItems.findOne!(ctx.params.id, {});
       if (meal) {
-        const updatedMeal: API.Cart.CartMealItem = await mealItems.update!(meal.id, {
+        const updatedMeal: API.Cart.CartItemMeal = await mealItems.update!(meal.id, {
           data: {
             quantity: meal.quantity + 1
           }
@@ -80,7 +80,7 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
       }
     },
     async delete(ctx: API.Context<null>) {
-      const meal: API.Cart.CartMealItem = await mealItems.findOne!(ctx.params.id, {});
+      const meal: API.Cart.CartItemMeal = await mealItems.findOne!(ctx.params.id, {});
 
       if (meal && meal.quantity > 1) {
         const decrementedMealItem = await mealItems.update!(ctx.params.id, {

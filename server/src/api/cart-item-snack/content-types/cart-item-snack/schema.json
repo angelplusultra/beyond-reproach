@@ -25,6 +25,11 @@
       "relation": "manyToOne",
       "target": "api::cart-day.cart-day",
       "inversedBy": "snacks"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

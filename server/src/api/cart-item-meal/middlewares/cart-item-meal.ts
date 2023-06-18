@@ -3,9 +3,9 @@ import { NextFunction } from 'connect';
 import * as yup from 'yup';
 
 export default {
-  async validateDayCartOwnership(ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>, next: NextFunction) {
+  async validateCartDayOwnership(ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>, next: NextFunction) {
     const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
-    const subCart = await cartDays.findOne!(ctx.request.body.cart_day_id, {
+    const subCart = await cartDays.findOne!(ctx.request.body.cart_day, {
       populate: {
         user: true,
         lunches: true,
@@ -40,7 +40,7 @@ export default {
         .array()
         .of(yup.number().typeError('omitted_ingredients must be an array with only number types'))
         .typeError('omitted_ingredients must be an array with only number types'),
-      cart_day_id: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type'),
+      cart_day: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type'),
       quantity: yup.number().required('quantity is required').typeError('quantity must be number type')
     });
 
@@ -56,7 +56,7 @@ export default {
   async validateCartMealItemOwnership(ctx: API.Context, next: NextFunction) {
     const mealItemId = ctx.params.id;
 
-    const mealItem: API.Cart.CartMealItem = await strapi.service('api::cart-item-meal.cart-item-meal')!.findOne!(
+    const mealItem: API.Cart.CartItemMeal = await strapi.service('api::cart-item-meal.cart-item-meal')!.findOne!(
       mealItemId,
       {
         populate: {

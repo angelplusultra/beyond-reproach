@@ -3,9 +3,9 @@ import { NextFunction } from 'connect';
 import * as yup from 'yup';
 
 export default {
-  async validateDayCartOwnsership(ctx: API.Context<API.Cart.CreateNewCartItemBundleRequestBody>, next: NextFunction) {
+  async validateCartDayOwnsership(ctx: API.Context<API.Cart.CreateNewCartItemBundleRequestBody>, next: NextFunction) {
     const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
-    const subCart = await cartDays.findOne!(ctx.request.body.cart_day_id, {
+    const subCart = await cartDays.findOne!(ctx.request.body.cart_day, {
       populate: {
         user: true,
         lunches: true,

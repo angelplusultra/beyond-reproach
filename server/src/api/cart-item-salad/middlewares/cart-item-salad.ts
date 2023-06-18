@@ -3,14 +3,12 @@ import { NextFunction } from 'connect';
 import * as yup from 'yup';
 
 export default {
-  async validateDayCartOwnership(ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>, next: NextFunction) {
+  async validateCartDayOwnership(ctx: API.Context<API.Cart.CreateNewCartItemSaladRequestBody>, next: NextFunction) {
     const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
-    const subCart = await cartDays.findOne!(ctx.request.body.cart_day_id, {
+    const subCart = await cartDays.findOne!(ctx.request.body.cart_day, {
       populate: {
         user: true,
-        lunches: true,
-        dinners: true,
-        bundles: true
+        salads: true
       }
     });
 
@@ -22,11 +20,12 @@ export default {
       return ctx.badRequest('You are not the owner of the provided Sub Cart');
     }
     ctx.state.user.cartDay = subCart;
+
     return next();
   },
 
   async validateCreateRequestBodySchema(
-    ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>,
+    ctx: API.Context<API.Cart.CreateNewCartItemSaladRequestBody>,
     next: NextFunction
   ) {
     const createCartItemSaladRequestBodySchema = yup.object({
@@ -35,7 +34,7 @@ export default {
         .array()
         .of(yup.number().typeError('omitted_ingredients must be an array with only number types'))
         .typeError('omitted_ingredients must be an array with only number types'),
-      cart_day_id: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type'),
+      cart_day: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type'),
       quantity: yup.number().required('quantity is required').typeError('quantity must be number type')
     });
 
@@ -51,7 +50,7 @@ export default {
   async validateCartItemSaladOwnership(ctx: API.Context, next: NextFunction) {
     const saladItemId = ctx.params.id;
 
-    const saladItem: API.Cart.CartItemSalad = await strapi.service('api::cart-item-meal.cart-item-meal')!.findOne!(
+    const saladItem: API.Cart.CartItemSalad = await strapi.service('api::cart-item-salad.cart-item-salad')!.findOne!(
       saladItemId,
       {
         populate: {
@@ -61,11 +60,13 @@ export default {
     );
 
     if (!saladItem) {
-      return ctx.badRequest('Meal Item does not exist');
+      return ctx.badRequest('Salad Item does not exist');
     }
     if (saladItem.user?.id !== ctx.state.user.id) {
-      return ctx.badRequest('You are not the owner of the provided Meal Item');
+      return ctx.badRequest('You are not the owner of the provided Salad Item');
     }
+
+    ctx.state.saladItem = saladItem;
 
     return next();
   }

@@ -31,7 +31,7 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
         return ctx.badRequest('No dinner exists with the provided ID');
       }
 
-      const newBundleItem: API.Cart.CartBundleItem = await bundleItems.create!({
+      const newBundleItem: API.Cart.CartItemBundle = await bundleItems.create!({
         data: {
           lunch: ctx.request.body.lunch,
           dinner: ctx.request.body.dinner,
@@ -43,7 +43,7 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
           dinner_accomodate_allergies: ctx.request.body.dinner_accomodate_allergies,
           lunch_omitted_ingredients: ctx.request.body.lunch_omitted_ingredients,
           dinner_omitted_ingredients: ctx.request.body.dinner_omitted_ingredients,
-          cart_day: ctx.request.body.cart_day_id,
+          cart_day: ctx.request.body.cart_day,
           user: ctx.state.user.id
         }
       });
@@ -62,9 +62,9 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
       return updatedCartDay;
     },
     async update(ctx: API.Context<null>) {
-      const bundle: API.Cart.CartBundleItem = await bundleItems.findOne!(ctx.params.id, {});
+      const bundle: API.Cart.CartItemBundle = await bundleItems.findOne!(ctx.params.id, {});
       if (bundle) {
-        const updatedBundle: API.Cart.CartBundleItem = await bundleItems.update!(bundle.id, {
+        const updatedBundle: API.Cart.CartItemBundle = await bundleItems.update!(bundle.id, {
           data: {
             quantity: bundle.quantity + 1
           }
@@ -73,7 +73,7 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
       }
     },
     async delete(ctx: API.Context<null>) {
-      const bundle: API.Cart.CartBundleItem = await bundleItems.findOne!(ctx.params.id, {});
+      const bundle: API.Cart.CartItemBundle = await bundleItems.findOne!(ctx.params.id, {});
 
       if (bundle && bundle.quantity > 1) {
         const decrementedBundleItem = await bundleItems.update!(ctx.params.id, {

@@ -45,6 +45,7 @@ namespace API {
           description: string;
         };
       };
+      saladItem?: Cart.CartItemSalad;
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
     };
     badRequest: (message: string, details?: object) => void;
@@ -66,10 +67,10 @@ namespace API {
       omitted_ingredients?: number[];
       quantity: number;
       protein_substitute?: number;
-      cart_day_id: string;
+      cart_day: string;
     }
 
-    interface CartMealItem {
+    interface CartItemMeal {
       id: string;
       meal: Meal.Meal['id'];
       quantity: number;
@@ -83,9 +84,25 @@ namespace API {
       };
     }
     interface CartItemSalad {
+      id: string;
       salad: number;
       quantity: number;
       omitted_ingredients: number[];
+      user?: {
+        id: number;
+        username: string;
+        password: string;
+      };
+    }
+    interface CreateNewCartItemSaladRequestBody {
+      salad: string;
+      quantity: number;
+      omitted_ingredients: number[];
+      cart_day: CartDay['id'];
+    }
+    interface CartItemSnack {
+      snack: number;
+      quantity: number;
       user?: {
         id: number;
         username: string;
@@ -104,9 +121,9 @@ namespace API {
       dinner_accomodate_allergies?: number[];
       lunch_omitted_ingredients?: number[];
       dinner_omitted_ingredients?: number[];
-      cart_day_id: string;
+      cart_day: string;
     }
-    interface CartBundleItem {
+    interface CartItemBundle {
       id: string;
       lunch: number;
       dinner: number;
@@ -127,9 +144,17 @@ namespace API {
     }
     interface CartDay {
       id: string;
-      lunches: CartMealItem[];
-      dinners: CartMealItem[];
-      bundles: CartBundleItem[];
+      lunches: CartItemMeal[];
+      dinners: CartItemMeal[];
+      bundles: CartItemBundle[];
+      salads: CartItemSalad[];
+      snacks: CartItemSnack[];
+      day: Day;
+      user?: {
+        id: number;
+        username: string;
+        password: string;
+      };
     }
   }
 
@@ -191,7 +216,7 @@ namespace API {
   }
 }
 
-namespace Meal {
+namespace ContentType {
   interface Meal {
     id: number;
   }
