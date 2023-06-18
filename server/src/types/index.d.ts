@@ -46,6 +46,7 @@ namespace API {
         };
       };
       saladItem?: Cart.CartItemSalad;
+      snackItem?: Cart.CartItemSnack;
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
     };
     badRequest: (message: string, details?: object) => void;
