@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "meal_orders",
+  "info": {
+    "singularName": "meal-order",
+    "pluralName": "meal-orders",
+    "displayName": "MealOrder"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "meal": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::meal.meal"
+    },
+    "accommodate_allergies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::allergy.allergy"
+    },
+    "quantity": {
+      "type": "integer"
+    },
+    "protein_substitute": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::protein.protein"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "omitted_ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
+    }
+  }
+}

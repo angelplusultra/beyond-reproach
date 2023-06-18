@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "order_days",
+  "info": {
+    "singularName": "order-day",
+    "pluralName": "order-days",
+    "displayName": "OrderDay"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "lunches": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::meal-order.meal-order"
+    },
+    "dinners": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::meal-order.meal-order"
+    }
+  }
+}
