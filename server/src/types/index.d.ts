@@ -88,6 +88,7 @@ namespace API {
       id: string;
       salad: number;
       quantity: number;
+      cart_day: number;
       omitted_ingredients: number[];
       user?: {
         id: number;
@@ -102,8 +103,10 @@ namespace API {
       cart_day: CartDay['id'];
     }
     interface CartItemSnack {
+      id: string;
       snack: number;
       quantity: number;
+      cart_day: number;
       user?: {
         id: number;
         username: string;
