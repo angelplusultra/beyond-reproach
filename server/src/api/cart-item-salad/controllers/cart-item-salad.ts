@@ -65,15 +65,15 @@ export default factories.createCoreController('api::cart-item-salad.cart-item-sa
         return ctx.badRequest('No Salad Item is appended to ctx.state');
       }
       if (saladItem.quantity > 1) {
-        const decrementedMealItem = await saladItems.update!(ctx.params.id, {
+        const decrementedSaladItem = await saladItems.update!(ctx.params.id, {
           data: {
             quantity: saladItem.quantity - 1
           }
         });
 
         return {
-          decrementedMealItem,
-          message: 'Meal item has been decremented'
+          decrementedSaladItem,
+          message: 'Salad item has been decremented'
         };
       } else if (saladItem.quantity === 1) {
         await saladItems.delete!(saladItem.id as never, {});
