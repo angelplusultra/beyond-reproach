@@ -46,7 +46,7 @@ export default {
   async validateCartItemSnackOwnership(ctx: API.Context, next: NextFunction) {
     const snackItemId = ctx.params.id;
 
-    const snackItem: API.Cart.CartItemSnack = await strapi.service('api:cart-item-snack.cart-item-snack')!.findOne!(
+    const snackItem: API.Cart.CartItemSnack = await strapi.service('api::cart-item-snack.cart-item-snack')!.findOne!(
       snackItemId,
       {
         populate: {
