@@ -51,7 +51,7 @@ export default {
       dinner_omitted_ingredients: yup
         .array(yup.number().typeError('dinner_omitted_ingredients must be an array with only numbers'))
         .typeError('dinner_omitted_ingredients must be an array with only numbers'),
-      cart_day_id: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type')
+      cart_day: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type')
     });
 
     try {

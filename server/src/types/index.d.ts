@@ -139,6 +139,7 @@ namespace API {
       dinner: number;
       quantity: number;
       bundle_snack: number;
+      total: number;
       lunch_protein_substitute?: number;
       dinner_protein_substitute?: number;
       lunch_accomodate_allergies?: number[];

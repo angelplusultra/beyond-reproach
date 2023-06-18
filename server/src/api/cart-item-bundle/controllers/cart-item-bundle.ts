@@ -44,7 +44,8 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
           lunch_omitted_ingredients: ctx.request.body.lunch_omitted_ingredients,
           dinner_omitted_ingredients: ctx.request.body.dinner_omitted_ingredients,
           cart_day: ctx.request.body.cart_day,
-          user: ctx.state.user.id
+          user: ctx.state.user.id,
+          total: (lunch.price + dinner.price) * ctx.request.body.quantity
         }
       });
 
