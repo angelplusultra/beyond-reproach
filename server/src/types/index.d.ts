@@ -110,6 +110,12 @@ namespace API {
       };
     }
 
+    interface CreateNewCartItemSnackRequestBody {
+      snack: string;
+      quantity: number;
+      cart_day: CartDay['id'];
+    }
+
     interface CreateNewCartItemBundleRequestBody {
       lunch: string;
       dinner: string;
