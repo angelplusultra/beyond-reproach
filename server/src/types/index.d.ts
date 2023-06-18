@@ -46,6 +46,7 @@ namespace API {
         };
       };
       saladItem?: Cart.CartItemSalad;
+      snackItem?: Cart.CartItemSnack;
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
     };
     badRequest: (message: string, details?: object) => void;
@@ -87,6 +88,7 @@ namespace API {
       id: string;
       salad: number;
       quantity: number;
+      cart_day: number;
       omitted_ingredients: number[];
       user?: {
         id: number;
@@ -101,13 +103,21 @@ namespace API {
       cart_day: CartDay['id'];
     }
     interface CartItemSnack {
+      id: string;
       snack: number;
       quantity: number;
+      cart_day: number;
       user?: {
         id: number;
         username: string;
         password: string;
       };
+    }
+
+    interface CreateNewCartItemSnackRequestBody {
+      snack: string;
+      quantity: number;
+      cart_day: CartDay['id'];
     }
 
     interface CreateNewCartItemBundleRequestBody {
