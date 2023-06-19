@@ -45,6 +45,7 @@ namespace API {
           description: string;
         };
       };
+      bundleItem?: Cart.CartItemBundle;
       saladItem?: Cart.CartItemSalad;
       snackItem?: Cart.CartItemSnack;
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
@@ -61,6 +62,12 @@ namespace API {
       wednesday: DaySheet;
       thursday: DaySheet;
       friday: DaySheet;
+      total: number;
+      id: string;
+    }
+
+    interface CartQuery {
+      results: Cart[];
     }
     interface CreateNewCartItemMealRequestBody {
       meal: string;
@@ -135,8 +142,8 @@ namespace API {
     }
     interface CartItemBundle {
       id: string;
-      lunch: number;
-      dinner: number;
+      lunch: ContentType.Meal;
+      dinner: ContentType.Meal;
       quantity: number;
       bundle_snack: number;
       total: number;
@@ -229,7 +236,9 @@ namespace API {
 
 namespace ContentType {
   interface Meal {
-    id: number;
+    id: string;
+    title: string;
+    price: number;
   }
 }
 

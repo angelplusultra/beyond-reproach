@@ -69,7 +69,9 @@ export default {
     const bundleItems = strapi.service('api::cart-item-bundle.cart-item-bundle') as GenericService;
     const bundleItem = await bundleItems.findOne!(bundleItemId, {
       populate: {
-        user: true
+        user: true,
+        lunch: true,
+        dinner: true
       }
     });
 
@@ -79,6 +81,8 @@ export default {
     if (bundleItem.user.id !== ctx.state.user.id) {
       return ctx.badRequest('You are not the owner of the provided Bundle Item');
     }
+
+    ctx.state.bundleItem = bundleItem;
 
     return next();
   }
