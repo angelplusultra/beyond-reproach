@@ -37,11 +37,11 @@ export default {
       bundle_snack: yup.number().required('bundle_snack is required').typeError('bundle_snack must be number type'),
       lunch_protein_substitute: yup.number().typeError('lunch_protein_substitute must be of number type'),
       dinner_protein_substitute: yup.number().typeError('dinner_protein_substitute must be of number type'),
-      lunch_accomodate_allergies: yup
+      lunch_accommodate_allergies: yup
         .array()
         .of(yup.number().typeError('lunch_accomodate_allergies must be an array with only numbers'))
         .typeError('lunch_accomodate_allergies must be an array with only numbers'),
-      dinner_accomodate_allergies: yup
+      dinner_accommodate_allergies: yup
         .array()
         .of(yup.number().typeError('dinner_accomodate_allergies must be an array with only numbers'))
         .typeError('dinner_accomodate_allergies must be an array with only numbers'),
@@ -51,7 +51,7 @@ export default {
       dinner_omitted_ingredients: yup
         .array(yup.number().typeError('dinner_omitted_ingredients must be an array with only numbers'))
         .typeError('dinner_omitted_ingredients must be an array with only numbers'),
-      cart_day_id: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type')
+      cart_day: yup.number().required('cart_day_id is required').typeError('cart_day_id must be number type')
     });
 
     try {

@@ -1,6 +1,24 @@
 /* eslint-disable */
 namespace API {
   type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
+
+  namespace ContentType {
+    interface Meal {
+      id: number;
+    }
+    interface Ingredient {
+      name: string;
+      id: string;
+    }
+    interface Protein {
+      title: string;
+      id: string;
+    }
+    interface Allergy {
+      type: string;
+      id: string;
+    }
+  }
   interface Route {
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     path: string;
@@ -76,7 +94,9 @@ namespace API {
       meal: Meal.Meal['id'];
       quantity: number;
       protein: number;
-      accommodate_allergies: number[];
+      accommodate_allergies: ContentType.Ingredient[];
+      protein_substitute: ContentType.Protein;
+      omitted_ingredients: ContentType.Ingredient[];
       cart_day: CartDay['id'];
       user: {
         id: number;
@@ -127,8 +147,8 @@ namespace API {
       bundle_snack: number;
       lunch_protein_substitute?: number;
       dinner_protein_substitute?: number;
-      lunch_accomodate_allergies?: number[];
-      dinner_accomodate_allergies?: number[];
+      lunch_accommodate_allergies?: number[];
+      dinner_accommodate_allergies?: number[];
       lunch_omitted_ingredients?: number[];
       dinner_omitted_ingredients?: number[];
       cart_day: string;
@@ -141,8 +161,8 @@ namespace API {
       bundle_snack: number;
       lunch_protein_substitute?: number;
       dinner_protein_substitute?: number;
-      lunch_accomodate_allergies?: number[];
-      dinner_accomodate_allergies?: number[];
+      lunch_accommodate_allergies?: number[];
+      dinner_accommodate_allergies?: number[];
       lunch_omitted_ingredients?: number[];
       dinner_omitted_ingredients?: number[];
       cart_day: number;
@@ -223,12 +243,6 @@ namespace API {
 
   interface UpdateCartItemMealRequestBody {
     mealItemId: string;
-  }
-}
-
-namespace ContentType {
-  interface Meal {
-    id: number;
   }
 }
 

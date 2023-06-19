@@ -1,10 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "meal_orders",
+  "collectionName": "order_meals",
   "info": {
-    "singularName": "meal-order",
-    "pluralName": "meal-orders",
-    "displayName": "MealOrder"
+    "singularName": "order-meal",
+    "pluralName": "order-meals",
+    "displayName": "OrderMeal",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -21,23 +22,33 @@
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
     },
-    "quantity": {
-      "type": "integer"
-    },
     "protein_substitute": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::protein.protein"
+    },
+    "omitted_ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
+    },
+    "quantity": {
+      "type": "integer"
+    },
+    "order_day": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-day.order-day"
     },
     "user": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "omitted_ingredients": {
+    "order": {
       "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::ingredient.ingredient"
+      "relation": "oneToOne",
+      "target": "api::order.order"
     }
   }
 }

@@ -33,6 +33,7 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
           omitted_ingredients: ctx.request.body.omitted_ingredients,
           quantity: ctx.request.body.quantity,
           cart_day: cartDay.id,
+          day: cartDay.day,
           user: ctx.state.user.id
         }
       });

@@ -44,6 +44,16 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::ingredient.ingredient"
+    },
+    "day": {
+      "type": "enumeration",
+      "enum": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday"
+      ]
     }
   }
 }

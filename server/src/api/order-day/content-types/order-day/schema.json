@@ -4,7 +4,8 @@
   "info": {
     "singularName": "order-day",
     "pluralName": "order-days",
-    "displayName": "OrderDay"
+    "displayName": "OrderDay",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -14,12 +15,37 @@
     "lunches": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::meal-order.meal-order"
+      "target": "api::order-meal.order-meal"
     },
     "dinners": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::meal-order.meal-order"
+      "target": "api::order-meal.order-meal"
+    },
+    "bundles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order-bundle.order-bundle"
+    },
+    "snacks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order-snack.order-snack"
+    },
+    "salads": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order-salad.order-salad"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order"
     }
   }
 }
