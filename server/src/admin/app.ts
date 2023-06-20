@@ -1,3 +1,4 @@
+/* eslint-disable */
 //@ts-ignore
 import logo from './extensions/logo.png';
 export default {

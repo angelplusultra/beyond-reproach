@@ -163,7 +163,10 @@ namespace API {
 
     interface CartItemSnackQuery {
       results: CartItemSnack[];
+    }
 
+    interface CartDayQuery {
+      results: CartDay[];
     }
 
     interface CreateNewCartItemSnackRequestBody {

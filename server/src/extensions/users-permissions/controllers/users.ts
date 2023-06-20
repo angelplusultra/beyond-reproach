@@ -112,6 +112,9 @@ export default {
         city: sanitizedUser.city,
         postal_code: sanitizedUser.zipcode,
         state: sanitizedUser.state
+      },
+      metadata: {
+        user_id: sanitizedUser.id
       }
     });
 
@@ -131,7 +134,6 @@ export default {
     const users = strapi.db.query('plugin::users-permissions.user');
     // TODO SESSION LINK AND JWT, FRONTEND WILL PUT JWT IN LS
 
-    //@ts-ignore
     ctx.send({
       session,
       customer,

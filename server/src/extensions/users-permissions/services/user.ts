@@ -1,7 +1,7 @@
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
 export default {
-  async createCartRelations(sanitizedUser: any) {
+  async createCartRelations(sanitizedUser: API.Auth.User) {
     const cartDay = strapi.service('api::cart-day.cart-day') as GenericService;
     const cart = strapi.service('api::cart.cart') as GenericService;
 
