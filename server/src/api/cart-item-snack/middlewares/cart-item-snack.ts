@@ -50,7 +50,8 @@ export default {
       snackItemId,
       {
         populate: {
-          user: true
+          user: true,
+          snack: true
         }
       }
     );

@@ -54,7 +54,8 @@ export default {
       saladItemId,
       {
         populate: {
-          user: true
+          user: true,
+          salad: true
         }
       }
     );

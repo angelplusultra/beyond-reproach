@@ -9,6 +9,7 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
   const bundleItems = strapi.service('api::cart-item-bundle.cart-item-bundle') as GenericService;
   const meals = strapi.service('api::meal.meal') as GenericService;
   const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
+  const carts = strapi.service('api::cart.cart') as GenericService;
   //   const snacks = strapi.service('api:snack.snack') as GenericService
 
   return {
@@ -44,7 +45,8 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
           lunch_omitted_ingredients: ctx.request.body.lunch_omitted_ingredients,
           dinner_omitted_ingredients: ctx.request.body.dinner_omitted_ingredients,
           cart_day: ctx.request.body.cart_day,
-          user: ctx.state.user.id
+          user: ctx.state.user.id,
+          total: (lunch.price + dinner.price) * ctx.request.body.quantity
         }
       });
 
@@ -59,37 +61,96 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
         }
       });
 
-      return updatedCartDay;
+      const myCart = (await carts.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartQuery;
+
+      const updatedCart = await carts.update!(myCart.results[0].id, {
+        data: {
+          total: myCart.results[0].total + newBundleItem.total
+        }
+      });
+      return {
+        updatedCartDay,
+        updatedCart
+      };
     },
     async update(ctx: API.Context<null>) {
-      const bundle: API.Cart.CartItemBundle = await bundleItems.findOne!(ctx.params.id, {});
+      const bundle = ctx.state.bundleItem;
+
       if (bundle) {
         const updatedBundle: API.Cart.CartItemBundle = await bundleItems.update!(bundle.id, {
           data: {
-            quantity: bundle.quantity + 1
+            quantity: bundle.quantity + 1,
+            total: (bundle.lunch.price + bundle.dinner.price) * (bundle.quantity + 1)
           }
         });
-        return updatedBundle;
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
+          }
+        })) as API.Cart.CartQuery;
+
+        const updatedCart = await carts.update!(myCart.results[0].id, {
+          data: {
+            total: myCart.results[0].total + (bundle.lunch.price + bundle.dinner.price)
+          }
+        });
+        return {
+          updatedBundle,
+          updatedCart
+        };
       }
     },
     async delete(ctx: API.Context<null>) {
-      const bundle: API.Cart.CartItemBundle = await bundleItems.findOne!(ctx.params.id, {});
+      const bundle = ctx.state.bundleItem;
 
       if (bundle && bundle.quantity > 1) {
         const decrementedBundleItem = await bundleItems.update!(ctx.params.id, {
           data: {
-            quantity: bundle.quantity - 1
+            quantity: bundle.quantity - 1,
+            total: (bundle.lunch.price + bundle.dinner.price) * (bundle.quantity - 1)
+          }
+        });
+
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
+          }
+        })) as API.Cart.CartQuery;
+
+        const updatedCart = await carts.update!(myCart.results[0].id, {
+          data: {
+            total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
           }
         });
 
         return {
           decrementedBundleItem,
+          updatedCart,
           message: 'Bundle Item has been decremented'
         };
       } else if (bundle && bundle.quantity === 1) {
         await bundleItems.delete!(bundle.id as never, {});
 
-        return 'Item has been completely Deleted';
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
+          }
+        })) as API.Cart.CartQuery;
+
+        const updatedCart = await carts.update!(myCart.results[0].id, {
+          data: {
+            total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
+          }
+        });
+
+        return {
+          updatedCart,
+          message: 'Item has been completely Deleted'
+        };
       }
     }
   };

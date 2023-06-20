@@ -23,6 +23,10 @@
       "relation": "oneToMany",
       "target": "api::cart-day.cart-day",
       "mappedBy": "cart"
+    },
+    "total": {
+      "type": "decimal",
+      "default": 0
     }
   }
 }

@@ -83,6 +83,8 @@ namespace API {
           description: string;
         };
       };
+      bundleItem?: Cart.CartItemBundle;
+      mealItem?: Cart.CartItemMeal;
       saladItem?: Cart.CartItemSalad;
       snackItem?: Cart.CartItemSnack;
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
@@ -99,6 +101,12 @@ namespace API {
       wednesday: DaySheet;
       thursday: DaySheet;
       friday: DaySheet;
+      total: number;
+      id: string;
+    }
+
+    interface CartQuery {
+      results: Cart[];
     }
     interface CreateNewCartItemMealRequestBody {
       meal: string;
@@ -111,8 +119,10 @@ namespace API {
 
     interface CartItemMeal {
       id: string;
-      meal: Meal.Meal;
+
+      meal: ContentType.Meal;
       quantity: number;
+      total: number;
       protein: number;
       accommodate_allergies: ContentType.Allergy[];
       protein_substitute: ContentType.Protein;
@@ -127,6 +137,7 @@ namespace API {
       id: string;
       salad: ContentType.Salad;
       quantity: number;
+      total: number;
       cart_day: CartDay;
       omitted_ingredients: ContentType.Ingredient[];
       user?: Auth.User;
@@ -145,12 +156,14 @@ namespace API {
       id: string;
       snack: ContentType.Snack;
       quantity: number;
+      total: number;
       cart_day: CartDay;
       user?: Auth.User;
     }
 
     interface CartItemSnackQuery {
       results: CartItemSnack[];
+
     }
 
     interface CreateNewCartItemSnackRequestBody {
@@ -177,6 +190,9 @@ namespace API {
       lunch: ContentType.Meal;
       dinner: ContentType.Meal;
       quantity: number;
+
+      total: number;
+
       bundle_snack: ContentType.Snack;
       lunch_protein_substitute?: ContentType.Protein;
       dinner_protein_substitute?: ContentType.Protein;

@@ -45,6 +45,10 @@
       "relation": "oneToMany",
       "target": "api::ingredient.ingredient"
     },
+    "total": {
+      "type": "decimal",
+      "default": 0
+    },
     "day": {
       "type": "enumeration",
       "enum": [
@@ -54,6 +58,7 @@
         "thursday",
         "friday"
       ]
+
     }
   }
 }
