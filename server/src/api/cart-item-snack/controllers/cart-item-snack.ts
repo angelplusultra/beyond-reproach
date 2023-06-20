@@ -9,6 +9,7 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
   const snackItems = strapi.service('api::cart-item-snack.cart-item-snack') as GenericService;
   const snacks = strapi.service('api::snack.snack') as GenericService;
   const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
+  const carts = strapi.service('api::cart.cart') as GenericService;
 
   return {
     async create(ctx: API.Context<API.Cart.CreateNewCartItemSnackRequestBody>) {
@@ -29,7 +30,8 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
           snack: ctx.request.body.snack,
           quantity: ctx.request.body.quantity,
           cart_day: ctx.request.body.cart_day,
-          user: ctx.state.user.id
+          user: ctx.state.user.id,
+          total: snack.price * ctx.request.body.quantity
         }
       });
 
@@ -38,23 +40,60 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
           snacks: [...cartDay.snacks, newSnackItem.id]
         },
         populate: {
+          lunches: true,
+          dinners: true,
+          bundles: true,
+          salads: true,
           snacks: true
         }
       });
 
-      return updatedCartDay;
+      const myCart = (await carts.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartQuery;
+
+      const updatedCart = await carts.update!(myCart.results[0].id, {
+        data: {
+          total: myCart.results[0].total + newSnackItem.total
+        }
+      });
+
+      return {
+        updatedCartDay,
+        updatedCart
+      };
     },
 
     async update(ctx: API.Context<null>) {
-      if (!ctx.state.snackItem) {
+      const snackItem = ctx.state.snackItem;
+      if (!snackItem) {
         return ctx.badRequest('No Snack Item is appended to ctx.state');
       }
-      const updatedSnackItem: API.Cart.CartItemSnack = await snackItems.update!(ctx.state.snackItem.id, {
+      const updatedSnackItem: API.Cart.CartItemSnack = await snackItems.update!(snackItem.id, {
         data: {
-          quantity: ctx.state.snackItem.quantity + 1
+          quantity: snackItem.quantity + 1,
+          total: snackItem.snack.price * (snackItem.quantity + 1)
         }
       });
-      return updatedSnackItem;
+
+      const myCart = (await carts.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartQuery;
+
+      const updatedCart = await carts.update!(myCart.results[0].id, {
+        data: {
+          total: myCart.results[0].total + snackItem.snack.price
+        }
+      });
+
+      return {
+        updatedSnackItem,
+        updatedCart
+      };
     },
     async delete(ctx: API.Context<null>) {
       const snackItem = ctx.state.snackItem;
@@ -65,18 +104,47 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
       if (snackItem.quantity > 1) {
         const decrementedSnackItem = await snackItems.update!(ctx.params.id, {
           data: {
-            quantity: snackItem.quantity - 1
+            quantity: snackItem.quantity - 1,
+            total: snackItem.snack.price * (snackItem.quantity - 1)
+          }
+        });
+
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
+          }
+        })) as API.Cart.CartQuery;
+
+        const updatedCart = await carts.update!(myCart.results[0].id, {
+          data: {
+            total: myCart.results[0].total - snackItem.snack.price
           }
         });
 
         return {
           decrementedSnackItem,
+          updatedCart,
           message: 'Snack item has been decremented'
         };
       } else if (snackItem.quantity === 1) {
         await snackItems.delete!(snackItem.id as never, {});
 
-        return 'Item has been completely Deleted';
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
+          }
+        })) as API.Cart.CartQuery;
+
+        const updatedCart = await carts.update!(myCart.results[0].id, {
+          data: {
+            total: myCart.results[0].total - snackItem.snack.price
+          }
+        });
+
+        return {
+          updatedCart,
+          message: 'Item has been completely Deleted'
+        };
       }
     }
   };

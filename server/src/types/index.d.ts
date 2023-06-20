@@ -114,8 +114,9 @@ namespace API {
     }
     interface CartItemSnack {
       id: string;
-      snack: number;
+      snack: ContentType.Snack;
       quantity: number;
+      total: number;
       cart_day: number;
       user?: {
         id: number;
@@ -244,6 +245,11 @@ namespace ContentType {
     price: number;
   }
   interface Salad {
+    id: string;
+    title: string;
+    price: number;
+  }
+  interface Snack {
     id: string;
     title: string;
     price: number;
