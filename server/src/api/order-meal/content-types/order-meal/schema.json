@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "cart_item_meals",
+  "collectionName": "order_meals",
   "info": {
-    "singularName": "cart-item-meal",
-    "pluralName": "cart-item-meals",
-    "displayName": "CartItemMeal",
+    "singularName": "order-meal",
+    "pluralName": "order-meals",
+    "displayName": "OrderMeal",
     "description": ""
   },
   "options": {
@@ -22,43 +22,33 @@
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
     },
-    "quantity": {
-      "type": "integer"
-    },
     "protein_substitute": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::protein.protein"
-    },
-    "cart_day": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::cart-day.cart-day"
-    },
-    "user": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
     },
     "omitted_ingredients": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::ingredient.ingredient"
     },
-    "total": {
-      "type": "decimal",
-      "default": 0
+    "quantity": {
+      "type": "integer"
     },
-    "day": {
-      "type": "enumeration",
-      "enum": [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday"
-      ]
-
+    "order_day": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-day.order-day"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order"
     }
   }
 }

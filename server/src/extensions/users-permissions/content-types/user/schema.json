@@ -91,6 +91,15 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::allergy.allergy"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "user"
+    },
+    "stripe_id": {
+      "type": "string"
     }
   }
 }

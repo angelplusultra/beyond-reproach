@@ -35,7 +35,9 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
           quantity: ctx.request.body.quantity,
           cart_day: cartDay.id,
           user: ctx.state.user.id,
-          total: meal.price * ctx.request.body.quantity
+          total: meal.price * ctx.request.body.quantity,
+          day: cartDay.day,
+
         }
       });
       // Move to schema validation middleware

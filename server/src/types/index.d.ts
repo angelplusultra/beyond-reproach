@@ -1,6 +1,43 @@
 /* eslint-disable */
 namespace API {
   type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
+  type MealType = 'lunch' | 'dinner';
+
+  namespace ContentType {
+    interface Meal {
+      id: number;
+      title: string;
+      accomodated_allergies: Allergy[];
+      allergies: Allergy[];
+      protein_substitutes: Protein[];
+      price: number;
+      omittable_ingredients: Ingredient[];
+      type: MealType;
+    }
+    interface Ingredient {
+      name: string;
+      id: string;
+    }
+    interface Protein {
+      title: string;
+      id: string;
+    }
+    interface Allergy {
+      type: string;
+      id: string;
+    }
+    interface Snack {
+      id: string;
+      title: string;
+      price: number;
+    }
+    interface Salad {
+      id: string;
+      title: string;
+      price: number;
+      omittable_ingredients: Ingredient[];
+    }
+  }
   interface Route {
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     path: string;
@@ -39,6 +76,7 @@ namespace API {
         state: string;
         zipcode: string;
         cartDay?: Cart.CartDay;
+        stripe_id: string;
         role: {
           id: number;
           name: string;
@@ -81,30 +119,32 @@ namespace API {
 
     interface CartItemMeal {
       id: string;
+
       meal: ContentType.Meal;
       quantity: number;
       total: number;
       protein: number;
-      accommodate_allergies: number[];
-      cart_day: CartDay['id'];
-      user: {
-        id: number;
-        username: string;
-        password: string;
-      };
+      accommodate_allergies: ContentType.Allergy[];
+      protein_substitute: ContentType.Protein;
+      omitted_ingredients: ContentType.Ingredient[];
+      cart_day: CartDay;
+      user: Auth.User;
+    }
+    interface CartItemMealQuery {
+      results: CartItemMeal[];
     }
     interface CartItemSalad {
       id: string;
       salad: ContentType.Salad;
       quantity: number;
       total: number;
-      cart_day: number;
-      omitted_ingredients: number[];
-      user?: {
-        id: number;
-        username: string;
-        password: string;
-      };
+      cart_day: CartDay;
+      omitted_ingredients: ContentType.Ingredient[];
+      user?: Auth.User;
+    }
+
+    interface CartItemSaladQuery {
+      results: CartItemSalad[];
     }
     interface CreateNewCartItemSaladRequestBody {
       salad: string;
@@ -117,12 +157,13 @@ namespace API {
       snack: ContentType.Snack;
       quantity: number;
       total: number;
-      cart_day: number;
-      user?: {
-        id: number;
-        username: string;
-        password: string;
-      };
+      cart_day: CartDay;
+      user?: Auth.User;
+    }
+
+    interface CartItemSnackQuery {
+      results: CartItemSnack[];
+
     }
 
     interface CreateNewCartItemSnackRequestBody {
@@ -138,8 +179,8 @@ namespace API {
       bundle_snack: number;
       lunch_protein_substitute?: number;
       dinner_protein_substitute?: number;
-      lunch_accomodate_allergies?: number[];
-      dinner_accomodate_allergies?: number[];
+      lunch_accommodate_allergies?: number[];
+      dinner_accommodate_allergies?: number[];
       lunch_omitted_ingredients?: number[];
       dinner_omitted_ingredients?: number[];
       cart_day: string;
@@ -149,20 +190,22 @@ namespace API {
       lunch: ContentType.Meal;
       dinner: ContentType.Meal;
       quantity: number;
-      bundle_snack: number;
+
       total: number;
-      lunch_protein_substitute?: number;
-      dinner_protein_substitute?: number;
-      lunch_accomodate_allergies?: number[];
-      dinner_accomodate_allergies?: number[];
-      lunch_omitted_ingredients?: number[];
-      dinner_omitted_ingredients?: number[];
-      cart_day: number;
-      user?: {
-        id: number;
-        username: string;
-        password: string;
-      };
+
+      bundle_snack: ContentType.Snack;
+      lunch_protein_substitute?: ContentType.Protein;
+      dinner_protein_substitute?: ContentType.Protein;
+      lunch_accommodate_allergies?: ContentType.Allergy[];
+      dinner_accommodate_allergies?: ContentType.Allergy[];
+      lunch_omitted_ingredients?: ContentType.Ingredient[];
+      dinner_omitted_ingredients?: ContentType.Ingredient[];
+      cart_day: CartDay;
+      user?: Auth.User;
+    }
+
+    interface CartItemBundleQuery {
+      results: CartItemBundle[];
     }
     interface CartDay {
       id: string;
@@ -172,16 +215,13 @@ namespace API {
       salads: CartItemSalad[];
       snacks: CartItemSnack[];
       day: Day;
-      user?: {
-        id: number;
-        username: string;
-        password: string;
-      };
+      user?: Auth.User;
     }
   }
 
   namespace Auth {
     interface User {
+      id: number;
       username: string;
       email: string;
       password: string;
@@ -197,6 +237,7 @@ namespace API {
       city: string;
       state: string;
       zipcode: string;
+      stripe_id: string;
     }
     interface UsersPermissionsPlugin {
       controllers: {
@@ -235,24 +276,6 @@ namespace API {
 
   interface UpdateCartItemMealRequestBody {
     mealItemId: string;
-  }
-}
-
-namespace ContentType {
-  interface Meal {
-    id: string;
-    title: string;
-    price: number;
-  }
-  interface Salad {
-    id: string;
-    title: string;
-    price: number;
-  }
-  interface Snack {
-    id: string;
-    title: string;
-    price: number;
   }
 }
 
