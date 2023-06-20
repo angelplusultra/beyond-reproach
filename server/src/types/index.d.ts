@@ -46,6 +46,7 @@ namespace API {
         };
       };
       bundleItem?: Cart.CartItemBundle;
+      mealItem?: Cart.CartItemMeal;
       saladItem?: Cart.CartItemSalad;
       snackItem?: Cart.CartItemSnack;
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
@@ -80,8 +81,9 @@ namespace API {
 
     interface CartItemMeal {
       id: string;
-      meal: Meal.Meal['id'];
+      meal: ContentType.Meal;
       quantity: number;
+      total: number;
       protein: number;
       accommodate_allergies: number[];
       cart_day: CartDay['id'];

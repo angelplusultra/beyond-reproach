@@ -60,7 +60,8 @@ export default {
       mealItemId,
       {
         populate: {
-          user: true
+          user: true,
+          meal: true
         }
       }
     );
@@ -71,6 +72,8 @@ export default {
     if (mealItem.user.id !== ctx.state.user.id) {
       return ctx.badRequest('You are not the owner of the provided Meal Item');
     }
+
+    ctx.state.mealItem = mealItem;
 
     return next();
   }
