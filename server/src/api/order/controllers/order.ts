@@ -125,8 +125,6 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
         );
         const bundleOrders = await Promise.all(
           cart.bundles.map(async (bundle) => {
-            console.log(bundle);
-
             const bundleOrder = await orderBundles.create!({
               data: {
                 lunch: bundle?.lunch,
@@ -199,7 +197,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
       friday: days.friday
     };
 
-    const updatedOrder = await orders.update!(order.id, {
+    await orders.update!(order.id, {
       data: {
         monday: dayOrders.monday,
         tuesday: dayOrders.tuesday,
@@ -249,8 +247,6 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
         }
       })) as API.Cart.CartItemSaladQuery;
 
-      console.log(mealItems);
-      //@ts-ignore
       const bundleLineItems = bundleItems.results.map((bundleItem) => {
         const lunchUnit = Math.round(bundleItem.lunch.price * 100);
         const dinnerUnit = Math.round(bundleItem.dinner.price * 100);
@@ -295,6 +291,21 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
           quantity: saladItem.quantity
         };
       });
+      const mealLineItems = mealItems.results.map((mealItem: any) => {
+        // Example decimal unit amount
+        const unit = Math.round(mealItem.meal.price * 100);
+
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: mealItem.meal.title
+            },
+            unit_amount: unit
+          },
+          quantity: mealItem.quantity
+        };
+      });
 
       const customer = await stripe.customers.retrieve(ctx.state.user.stripe_id);
       const session = await stripe.checkout.sessions.create({
@@ -306,23 +317,10 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
         //@ts-ignore
         line_items: [
           //@ts-ignore
-          ...mealItems.results.map((mealItem: any) => {
-            // Example decimal unit amount
-            const unit = Math.round(mealItem.meal.price * 100);
-            console.log(unit);
-
-            return {
-              price_data: {
-                currency: 'usd',
-                product_data: {
-                  name: mealItem.meal.title
-                },
-                unit_amount: unit
-              },
-              quantity: mealItem.quantity
-            };
-          }),
-          ...bundleLineItems
+          ...mealLineItems,
+          ...bundleLineItems,
+          ...snackLineItems,
+          ...saladLineItems
         ]
       });
       ctx.send({
