@@ -1,6 +1,7 @@
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 import { NextFunction } from 'connect';
 import * as yup from 'yup';
+import salad from '../../salad/controllers/salad';
 
 export default {
   async validateCartDayOwnership(ctx: API.Context<API.Cart.CreateNewCartItemSaladRequestBody>, next: NextFunction) {
@@ -54,7 +55,8 @@ export default {
       saladItemId,
       {
         populate: {
-          user: true
+          user: true,
+          salad: true
         }
       }
     );

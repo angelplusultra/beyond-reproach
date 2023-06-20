@@ -95,8 +95,9 @@ namespace API {
     }
     interface CartItemSalad {
       id: string;
-      salad: number;
+      salad: ContentType.Salad;
       quantity: number;
+      total: number;
       cart_day: number;
       omitted_ingredients: number[];
       user?: {
@@ -238,6 +239,11 @@ namespace API {
 
 namespace ContentType {
   interface Meal {
+    id: string;
+    title: string;
+    price: number;
+  }
+  interface Salad {
     id: string;
     title: string;
     price: number;
