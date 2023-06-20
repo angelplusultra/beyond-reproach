@@ -128,6 +128,7 @@ export default {
       }/api/auth/membership?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: 'http://localhost:1337'
     });
+    const users = strapi.db.query('plugin::users-permissions.user');
     // TODO SESSION LINK AND JWT, FRONTEND WILL PUT JWT IN LS
 
     //@ts-ignore
@@ -139,6 +140,14 @@ export default {
     });
 
     services.createCartRelations(sanitizedUser);
+    users.update({
+      where: {
+        email: sanitizedUser.email
+      },
+      data: {
+        stripe_id: customer.id
+      }
+    });
   },
 
   async onMembershipCheckoutSuccess(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>) {
