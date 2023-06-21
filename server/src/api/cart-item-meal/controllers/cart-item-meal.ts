@@ -14,6 +14,11 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
   const carts = strapi.service('api::cart.cart') as GenericService;
 
   return {
+    /*
+    @desc Creates a new Cart-Item-Meal entry
+    @route POST /api/cart-item-meals
+    @access Private
+    */
     async create(ctx: API.Context<API.Cart.CreateNewCartItemMealRequestBody>) {
       const cartDay = ctx.state.user.cartDay;
 
@@ -36,11 +41,9 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
           cart_day: cartDay.id,
           user: ctx.state.user.id,
           total: meal.price * ctx.request.body.quantity,
-          day: cartDay.day,
-
+          day: cartDay.day
         }
       });
-      // Move to schema validation middleware
 
       let updatedCartDay: API.Cart.CartDay;
       if (meal.type === 'dinner') {
@@ -101,6 +104,12 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
       }
     },
 
+    /*
+    @desc Updates a meal item in a users cart by incrementing the quantity of the meal item by 1
+    @route PUT /api/cart-item-meals/:id
+    @access Private
+    @params id
+    */
     async update(ctx: API.Context<null>) {
       const meal = ctx.state.mealItem;
 
@@ -128,54 +137,58 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
         };
       }
     },
+    /*
+    @desc Deletes a meal item from the cart or decrements the quantity of the meal item by 1
+    @route DELETE /api/cart-item-meals/:id
+    @access Private
+    @params id
+    @query? {
+      all: boolean
+    }
+    */
     async delete(ctx: API.Context<null>) {
       const meal = ctx.state.mealItem;
 
+      const myCart = (await carts.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartQuery;
+
+      let message, updatedCart, updatedMeal;
+
       if (meal && meal.quantity > 1) {
-        const decrementedMealItem = await mealItems.update!(ctx.params.id, {
+        updatedMeal = await mealItems.update!(ctx.params.id, {
           data: {
             quantity: meal.quantity - 1,
             total: meal.meal.price * (meal.quantity - 1)
           }
         });
 
-        const myCart = (await carts.find!({
-          filters: {
-            user: ctx.state.user.id
-          }
-        })) as API.Cart.CartQuery;
+        message = 'Meal quantity decremented by 1';
 
-        const updatedCart = await carts.update!(myCart.results[0].id, {
+        updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
             total: myCart.results[0].total - meal.meal.price
           }
         });
-
-        return {
-          decrementedMealItem,
-          updatedCart,
-          message: 'Meal item has been decremented'
-        };
       } else if (meal && meal.quantity === 1) {
         await mealItems.delete!(meal.id as never, {});
 
-        const myCart = (await carts.find!({
-          filters: {
-            user: ctx.state.user.id
-          }
-        })) as API.Cart.CartQuery;
-
-        const updatedCart = await carts.update!(myCart.results[0].id, {
+        updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
             total: myCart.results[0].total - meal.meal.price
           }
         });
 
-        return {
-          updatedCart,
-          message: 'Item has been completely Deleted'
-        };
+        message = 'Meal item deleted from cart';
       }
+
+      return {
+        updatedCart,
+        message,
+        updatedMeal
+      };
     }
   };
 });

@@ -43,16 +43,16 @@ export default {
 
     let mealCount = 0;
 
-    meals.results.map((meal) => {
+    meals.results.forEach((meal) => {
       mealCount += meal.quantity;
     });
 
-    bundles.results.map((bundle) => {
+    bundles.results.forEach((bundle) => {
       mealCount += bundle.quantity * 2;
     });
 
     if (mealCount < 4) {
-      return ctx.badRequest('Cart must have at least 4 meals');
+      return ctx.badRequest('User must have at least 4 Meals or 2 Bundles in their cart to checkout');
     }
 
     await next();

@@ -13,6 +13,11 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
   //   const snacks = strapi.service('api:snack.snack') as GenericService
 
   return {
+    /*
+    @desc Creates a new Cart-Item-Bundle entry
+    @route POST /api/cart-item-bundles
+    @access Private
+    */
     async create(ctx: API.Context<API.Cart.CreateNewCartItemBundleRequestBody>) {
       const cartDay = ctx.state.user.cartDay;
 
@@ -77,6 +82,11 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
         updatedCart
       };
     },
+    /*
+    @desc Updates a Cart-Item-Bundle entry by incrementing its quantity
+    @route PUT /api/cart-item-bundles/:id
+    @access Private
+    */
     async update(ctx: API.Context<null>) {
       const bundle = ctx.state.bundleItem;
 
@@ -104,54 +114,53 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
         };
       }
     },
+    /*
+    @desc Deletes a Cart-Item-Bundle entry or decrements its quantity
+    @route DELETE /api/cart-item-bundles/:id
+    @access Private
+    */
     async delete(ctx: API.Context<null>) {
       const bundle = ctx.state.bundleItem;
 
+      const myCart = (await carts.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartQuery;
+
+      let message, updatedCart, updatedBundleItem;
+
       if (bundle && bundle.quantity > 1) {
-        const decrementedBundleItem = await bundleItems.update!(ctx.params.id, {
+        updatedBundleItem = await bundleItems.update!(ctx.params.id, {
           data: {
             quantity: bundle.quantity - 1,
             total: (bundle.lunch.price + bundle.dinner.price) * (bundle.quantity - 1)
           }
         });
 
-        const myCart = (await carts.find!({
-          filters: {
-            user: ctx.state.user.id
-          }
-        })) as API.Cart.CartQuery;
-
-        const updatedCart = await carts.update!(myCart.results[0].id, {
+        updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
             total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
           }
         });
 
-        return {
-          decrementedBundleItem,
-          updatedCart,
-          message: 'Bundle Item has been decremented'
-        };
+        message = 'Bundle Item quantity decremented';
       } else if (bundle && bundle.quantity === 1) {
         await bundleItems.delete!(bundle.id as never, {});
 
-        const myCart = (await carts.find!({
-          filters: {
-            user: ctx.state.user.id
-          }
-        })) as API.Cart.CartQuery;
-
-        const updatedCart = await carts.update!(myCart.results[0].id, {
+        updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
             total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
           }
         });
 
-        return {
-          updatedCart,
-          message: 'Item has been completely Deleted'
-        };
+        message = 'Bundle Item deleted';
       }
+      return {
+        updatedCart,
+        updatedBundleItem,
+        message
+      };
     }
   };
 });
