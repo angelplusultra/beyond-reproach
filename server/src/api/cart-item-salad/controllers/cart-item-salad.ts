@@ -12,6 +12,11 @@ export default factories.createCoreController('api::cart-item-salad.cart-item-sa
   const carts = strapi.service('api::cart.cart') as GenericService;
 
   return {
+    /*
+    @desc Creates a new Cart-Item-Salad entry
+    @route POST /api/cart-item-salads
+    @access Private
+    */
     async create(ctx: API.Context<API.Cart.CreateNewCartItemSaladRequestBody>) {
       const cartDay = ctx.state.user.cartDay;
 
@@ -66,7 +71,11 @@ export default factories.createCoreController('api::cart-item-salad.cart-item-sa
         updatedCart
       };
     },
-
+    /*
+    @desc Updates a Cart-Item-Salad entry by incrementing the quantity of the Cart-Item-Salad entry
+    @route PUT /api/cart-item-salads/:id
+    @access Private
+    */
     async update(ctx: API.Context<null>) {
       const saladItem = ctx.state.saladItem;
       if (!saladItem) {
@@ -95,57 +104,53 @@ export default factories.createCoreController('api::cart-item-salad.cart-item-sa
         updatedCart
       };
     },
+    /*
+    @desc Deletes a Cart-Item-Salad entry or decrements the quantity of the Cart-Item-Salad entry
+    @route DELETE /api/cart-item-salads/:id
+    @access Private
+    */
     async delete(ctx: API.Context<null>) {
       const saladItem = ctx.state.saladItem;
 
-      if (!saladItem) {
-        return ctx.badRequest('No Salad Item is appended to ctx.state');
-      }
-      if (saladItem.quantity > 1) {
-        const decrementedSaladItem = await saladItems.update!(ctx.params.id, {
+      const myCart = (await carts.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartQuery;
+
+      let message, updatedCart, updatedSaladItem;
+
+      if (saladItem && saladItem.quantity > 1) {
+        updatedSaladItem = await saladItems.update!(ctx.params.id, {
           data: {
             quantity: saladItem.quantity - 1,
             total: saladItem.salad.price * (saladItem.quantity - 1)
           }
         });
 
-        const myCart = (await carts.find!({
-          filters: {
-            user: ctx.state.user.id
-          }
-        })) as API.Cart.CartQuery;
-
-        const updatedCart = await carts.update!(myCart.results[0].id, {
+        updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
             total: myCart.results[0].total - saladItem.salad.price
           }
         });
 
-        return {
-          decrementedSaladItem,
-          updatedCart,
-          message: 'Salad item has been decremented'
-        };
-      } else if (saladItem.quantity === 1) {
+        message = 'Salad item has been decremented';
+      } else if (saladItem && saladItem.quantity === 1) {
         await saladItems.delete!(saladItem.id as never, {});
 
-        const myCart = (await carts.find!({
-          filters: {
-            user: ctx.state.user.id
-          }
-        })) as API.Cart.CartQuery;
-
-        const updatedCart = await carts.update!(myCart.results[0].id, {
+        updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
             total: myCart.results[0].total - saladItem.salad.price
           }
         });
-
-        return {
-          updatedCart,
-          message: 'Item has been completely Deleted'
-        };
+        message = 'Salad item has been deleted';
       }
+
+      return {
+        updatedCart,
+        updatedSaladItem,
+        message
+      };
     }
   };
 });
