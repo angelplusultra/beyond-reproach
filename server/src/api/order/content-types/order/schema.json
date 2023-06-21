@@ -42,6 +42,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::order-day.order-day"
+    },
+    "text": {
+      "type": "richtext"
     }
   }
 }
