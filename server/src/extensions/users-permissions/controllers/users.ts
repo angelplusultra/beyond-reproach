@@ -129,7 +129,10 @@ export default {
       success_url: `${
         process.env.SERVER_BASE_URL || 'http://localhost:1337'
       }/api/auth/membership?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: 'http://localhost:1337'
+      cancel_url: 'http://localhost:1337',
+      metadata: {
+        user_id: sanitizedUser.id
+      }
     });
     const users = strapi.db.query('plugin::users-permissions.user');
     // TODO SESSION LINK AND JWT, FRONTEND WILL PUT JWT IN LS
@@ -154,9 +157,13 @@ export default {
 
   async onMembershipCheckoutSuccess(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>) {
     const users = strapi.db.query('plugin::users-permissions.user');
+
+    if (!ctx.state.session?.metadata) {
+      return ctx.badRequest('Stripe session is not attached to the state object');
+    }
     await users.update({
       where: {
-        email: ctx.state.session?.customer_details?.email
+        id: ctx.state.session.metadata.user_id
       },
       data: {
         role: 3
