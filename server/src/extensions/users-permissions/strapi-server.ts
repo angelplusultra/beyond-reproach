@@ -20,7 +20,7 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
 
   plugin.routes['content-api'].routes.push({
     method: 'GET',
-    path: '/auth/membership',
+    path: '/auth/membership/success',
     handler: 'auth.onMembershipCheckoutSuccess',
     config: {
       prefix: '',

@@ -128,7 +128,7 @@ export default {
       currency: 'USD',
       success_url: `${
         process.env.SERVER_BASE_URL || 'http://localhost:1337'
-      }/api/auth/membership?session_id={CHECKOUT_SESSION_ID}`,
+      }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: 'http://localhost:1337',
       metadata: {
         user_id: sanitizedUser.id
@@ -145,6 +145,7 @@ export default {
     });
 
     services.createCartRelations(sanitizedUser);
+
     users.update({
       where: {
         email: sanitizedUser.email
