@@ -146,8 +146,10 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
       all: boolean
     }
     */
-    async delete(ctx: API.Context<null>) {
-      const meal = ctx.state.mealItem;
+
+    async delete(ctx: API.Context<null, API.Cart.CartItemDeleteRequestQuery>) {
+      const mealItem = ctx.state.mealItem;
+      let message, updatedCart, updatedMeal;
 
       const myCart = (await carts.find!({
         filters: {
@@ -155,39 +157,51 @@ export default factories.createCoreController('api::cart-item-meal.cart-item-mea
         }
       })) as API.Cart.CartQuery;
 
-      let message, updatedCart, updatedMeal;
+      const deleteAll = ctx.request.query.all;
 
-      if (meal && meal.quantity > 1) {
-        updatedMeal = await mealItems.update!(ctx.params.id, {
-          data: {
-            quantity: meal.quantity - 1,
-            total: meal.meal.price * (meal.quantity - 1)
-          }
-        });
-
-        message = 'Meal quantity decremented by 1';
-
+      if (deleteAll === 'true' && mealItem) {
         updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
-            total: myCart.results[0].total - meal.meal.price
-          }
-        });
-      } else if (meal && meal.quantity === 1) {
-        await mealItems.delete!(meal.id as never, {});
-
-        updatedCart = await carts.update!(myCart.results[0].id, {
-          data: {
-            total: myCart.results[0].total - meal.meal.price
+            total: myCart.results[0].total - mealItem.total
           }
         });
 
-        message = 'Meal item deleted from cart';
+        updatedMeal = await mealItems.delete!(mealItem.id as never, {});
+
+        message = 'Meal Item has been deleted';
+      } else {
+        if (mealItem && mealItem.quantity > 1) {
+          updatedMeal = await mealItems.update!(ctx.params.id, {
+            data: {
+              quantity: mealItem.quantity - 1,
+              total: mealItem.meal.price * (mealItem.quantity - 1)
+            }
+          });
+
+          message = 'Meal Item quantity decremented by 1';
+
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - mealItem.meal.price
+            }
+          });
+        } else if (mealItem && mealItem.quantity === 1) {
+          await mealItems.delete!(mealItem.id as never, {});
+
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - mealItem.meal.price
+            }
+          });
+
+          message = 'Meal Item deleted from cart';
+        }
       }
 
       return {
+        updatedMeal,
         updatedCart,
-        message,
-        updatedMeal
+        message
       };
     }
   };

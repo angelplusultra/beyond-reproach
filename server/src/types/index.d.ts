@@ -175,6 +175,10 @@ namespace API {
       cart_day: CartDay['id'];
     }
 
+    interface CartItemDeleteRequestQuery {
+      all: string;
+    }
+
     interface CreateNewCartItemBundleRequestBody {
       lunch: string;
       dinner: string;
