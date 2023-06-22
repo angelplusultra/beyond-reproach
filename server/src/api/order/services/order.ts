@@ -4,8 +4,6 @@
 
 import { factories } from '@strapi/strapi';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
-import { stripe } from '../../../../config/stripe';
-import Stripe from 'stripe';
 
 export default factories.createCoreService('api::order.order');
 
@@ -20,11 +18,12 @@ export const extraServices = {
     const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
     const users = strapi.db.query('plugin::users-permissions.user');
 
-    const customer = (await stripe.customers.retrieve(ctx.state.session!.customer as string)) as Stripe.Customer;
-
+    if (!ctx.state.session || !ctx.state.session.metadata) {
+      return ctx.badRequest('Session is not appended to the state object');
+    }
     const user: API.Auth.User = await users.findOne!({
       where: {
-        id: customer.metadata.user_id
+        id: ctx.state.session.metadata.user_id
       }
     });
 

@@ -119,7 +119,10 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
         success_url: `${
           process.env.SERVER_BASE_URL || 'http://localhost:1337'
         }/api/orders/success?session_id={CHECKOUT_SESSION_ID}`,
-        line_items: [...mealLineItems, ...bundleLineItems, ...snackLineItems, ...saladLineItems]
+        line_items: [...mealLineItems, ...bundleLineItems, ...snackLineItems, ...saladLineItems],
+        metadata: {
+          user_id: ctx.state.user.id
+        }
       });
       ctx.send({
         session,

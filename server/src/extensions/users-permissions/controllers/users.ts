@@ -158,7 +158,7 @@ export default {
   async onMembershipCheckoutSuccess(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>) {
     const users = strapi.db.query('plugin::users-permissions.user');
 
-    if (!ctx.state.session?.metadata) {
+    if (!ctx.state.session || !ctx.state.session.metadata) {
       return ctx.badRequest('Stripe session is not attached to the state object');
     }
     await users.update({
