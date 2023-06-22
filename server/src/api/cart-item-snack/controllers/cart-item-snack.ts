@@ -4,6 +4,7 @@
 
 import { factories } from '@strapi/strapi';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
+import snack from '../../snack/controllers/snack';
 
 export default factories.createCoreController('api::cart-item-snack.cart-item-snack', ({ strapi }) => {
   const snackItems = strapi.service('api::cart-item-snack.cart-item-snack') as GenericService;
@@ -111,8 +112,9 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
     @access Private
     */
 
-    async delete(ctx: API.Context<null>) {
+    async delete(ctx: API.Context<null, API.Cart.CartItemDeleteRequestQuery>) {
       const snackItem = ctx.state.snackItem;
+      let message, updatedCart, updatedSnackItem;
 
       const myCart = (await carts.find!({
         filters: {
@@ -120,32 +122,45 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
         }
       })) as API.Cart.CartQuery;
 
-      let message, updatedCart, updatedSnackItem;
-      if (snackItem && snackItem.quantity > 1) {
-        updatedSnackItem = await snackItems.update!(ctx.params.id, {
-          data: {
-            quantity: snackItem.quantity - 1,
-            total: snackItem.snack.price * (snackItem.quantity - 1)
-          }
-        });
+      const deleteAll = ctx.request.query.all;
 
+      if (deleteAll === 'true' && snackItem) {
         updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
-            total: myCart.results[0].total - snackItem.snack.price
+            total: myCart.results[0].total - snackItem.total
           }
         });
 
-        message = 'Snack item quantity has been decremented';
-      } else if (snackItem && snackItem.quantity === 1) {
-        await snackItems.delete!(snackItem.id as never, {});
+        updatedSnackItem = await snackItems.delete!(snackItem.id as never, {});
 
-        updatedCart = await carts.update!(myCart.results[0].id, {
-          data: {
-            total: myCart.results[0].total - snackItem.snack.price
-          }
-        });
+        message = 'Snack Item has been deleted';
+      } else {
+        if (snackItem && snackItem.quantity > 1) {
+          updatedSnackItem = await snackItems.update!(ctx.params.id, {
+            data: {
+              quantity: snackItem.quantity - 1,
+              total: snackItem.snack.price * (snackItem.quantity - 1)
+            }
+          });
 
-        message = 'Snack item has been deleted';
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - snackItem.snack.price
+            }
+          });
+
+          message = 'Snack item quantity has been decremented';
+        } else if (snackItem && snackItem.quantity === 1) {
+          await snackItems.delete!(snackItem.id as never, {});
+
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - snackItem.snack.price
+            }
+          });
+
+          message = 'Snack item has been deleted';
+        }
       }
       return {
         updatedCart,
