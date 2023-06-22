@@ -149,7 +149,7 @@ namespace API {
     interface CreateNewCartItemSaladRequestBody {
       salad: string;
       quantity: number;
-      omitted_ingredients: number[];
+      omitted_ingredients?: number[];
       cart_day: CartDay['id'];
     }
     interface CartItemSnack {
