@@ -4,7 +4,6 @@
 
 import { factories } from '@strapi/strapi';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
-import snack from '../../snack/controllers/snack';
 
 export default factories.createCoreController('api::cart-item-snack.cart-item-snack', ({ strapi }) => {
   const snackItems = strapi.service('api::cart-item-snack.cart-item-snack') as GenericService;
