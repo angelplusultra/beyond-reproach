@@ -119,8 +119,9 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
     @route DELETE /api/cart-item-bundles/:id
     @access Private
     */
-    async delete(ctx: API.Context<null>) {
+    async delete(ctx: API.Context<null, API.Cart.CartItemDeleteRequestQuery>) {
       const bundle = ctx.state.bundleItem;
+      let message, updatedCart, updatedBundleItem;
 
       const myCart = (await carts.find!({
         filters: {
@@ -128,33 +129,45 @@ export default factories.createCoreController('api::cart-item-bundle.cart-item-b
         }
       })) as API.Cart.CartQuery;
 
-      let message, updatedCart, updatedBundleItem;
+      const deleteAll = ctx.request.query.all;
 
-      if (bundle && bundle.quantity > 1) {
-        updatedBundleItem = await bundleItems.update!(ctx.params.id, {
-          data: {
-            quantity: bundle.quantity - 1,
-            total: (bundle.lunch.price + bundle.dinner.price) * (bundle.quantity - 1)
-          }
-        });
-
+      if (deleteAll === 'true' && bundle) {
         updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
-            total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
+            total: myCart.results[0].total - bundle.total
           }
         });
 
-        message = 'Bundle Item quantity decremented';
-      } else if (bundle && bundle.quantity === 1) {
-        await bundleItems.delete!(bundle.id as never, {});
+        updatedBundleItem = await bundleItems.delete!(bundle.id as never, {});
 
-        updatedCart = await carts.update!(myCart.results[0].id, {
-          data: {
-            total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
-          }
-        });
+        message = 'Bundle Item has been deleted';
+      } else {
+        if (bundle && bundle.quantity > 1) {
+          updatedBundleItem = await bundleItems.update!(ctx.params.id, {
+            data: {
+              quantity: bundle.quantity - 1,
+              total: (bundle.lunch.price + bundle.dinner.price) * (bundle.quantity - 1)
+            }
+          });
 
-        message = 'Bundle Item deleted';
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
+            }
+          });
+
+          message = 'Bundle Item quantity decremented';
+        } else if (bundle && bundle.quantity === 1) {
+          await bundleItems.delete!(bundle.id as never, {});
+
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - (bundle.lunch.price + bundle.dinner.price)
+            }
+          });
+
+          message = 'Bundle Item deleted';
+        }
       }
       return {
         updatedCart,
