@@ -109,8 +109,9 @@ export default factories.createCoreController('api::cart-item-salad.cart-item-sa
     @route DELETE /api/cart-item-salads/:id
     @access Private
     */
-    async delete(ctx: API.Context<null>) {
+    async delete(ctx: API.Context<null, API.Cart.CartItemDeleteRequestQuery>) {
       const saladItem = ctx.state.saladItem;
+      let message, updatedCart, updatedSaladItem;
 
       const myCart = (await carts.find!({
         filters: {
@@ -118,32 +119,44 @@ export default factories.createCoreController('api::cart-item-salad.cart-item-sa
         }
       })) as API.Cart.CartQuery;
 
-      let message, updatedCart, updatedSaladItem;
+      const deleteAll = ctx.request.query.all;
 
-      if (saladItem && saladItem.quantity > 1) {
-        updatedSaladItem = await saladItems.update!(ctx.params.id, {
-          data: {
-            quantity: saladItem.quantity - 1,
-            total: saladItem.salad.price * (saladItem.quantity - 1)
-          }
-        });
-
+      if (deleteAll === 'true' && saladItem) {
         updatedCart = await carts.update!(myCart.results[0].id, {
           data: {
-            total: myCart.results[0].total - saladItem.salad.price
+            total: myCart.results[0].total - saladItem.total
           }
         });
 
-        message = 'Salad item has been decremented';
-      } else if (saladItem && saladItem.quantity === 1) {
-        await saladItems.delete!(saladItem.id as never, {});
+        updatedSaladItem = await saladItems.delete!(saladItem.id as never, {});
 
-        updatedCart = await carts.update!(myCart.results[0].id, {
-          data: {
-            total: myCart.results[0].total - saladItem.salad.price
-          }
-        });
-        message = 'Salad item has been deleted';
+        message = 'Salad Item has been Deleted';
+      } else {
+        if (saladItem && saladItem.quantity > 1) {
+          updatedSaladItem = await saladItems.update!(ctx.params.id, {
+            data: {
+              quantity: saladItem.quantity - 1,
+              total: saladItem.salad.price * (saladItem.quantity - 1)
+            }
+          });
+
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - saladItem.salad.price
+            }
+          });
+
+          message = 'Salad item has been decremented';
+        } else if (saladItem && saladItem.quantity === 1) {
+          await saladItems.delete!(saladItem.id as never, {});
+
+          updatedCart = await carts.update!(myCart.results[0].id, {
+            data: {
+              total: myCart.results[0].total - saladItem.salad.price
+            }
+          });
+          message = 'Salad item has been deleted';
+        }
       }
 
       return {
