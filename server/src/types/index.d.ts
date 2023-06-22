@@ -44,7 +44,7 @@ namespace API {
     handler: string;
     config: {
       middlewares: Middleware[];
-      auth: boolean;
+      auth?: boolean;
       prefix: string;
     };
   }
