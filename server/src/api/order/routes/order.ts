@@ -8,7 +8,7 @@ import middleware from '../middlewares/order';
 export default factories.createCoreRouter('api::order.order', {
   config: {
     create: {
-      middlewares: [middleware.validateMealQuantity]
+      middlewares: [middleware.validateOrderTimeFrame, middleware.validateMealQuantity]
     }
   }
 });

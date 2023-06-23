@@ -1,6 +1,7 @@
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 import { stripe } from '../../../../config/stripe';
 import { NextFunction } from 'connect';
+import moment from 'moment-timezone';
 
 export default {
   async validateCheckoutSession(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>, next: NextFunction) {
@@ -25,6 +26,25 @@ export default {
       }
     }
   },
+
+  async validateOrderTimeFrame(ctx: API.Context, next: NextFunction) {
+    try {
+      const userTime = moment().tz('America/New_York');
+      const validTime =
+        (userTime.isoWeekday() === 1 && userTime.hour() >= 12) ||
+        (userTime.isoWeekday() >= 2 && userTime.isoWeekday() <= 3) ||
+        (userTime.isoWeekday() === 4 && userTime.hour() < 12);
+
+      if (validTime) {
+        await next();
+      } else {
+        ctx.badRequest('Order must be placed between Monday 12:00PM and Thursday 12:00PM');
+      }
+    } catch (error) {
+      ctx.badRequest('An error occurred while checking the time.');
+    }
+  },
+
   async validateMealQuantity(ctx: API.Context, next: NextFunction) {
     const mealItems = strapi.service('api::cart-item-meal.cart-item-meal') as GenericService;
     const bundleItems = strapi.service('api::cart-item-bundle.cart-item-bundle') as GenericService;
