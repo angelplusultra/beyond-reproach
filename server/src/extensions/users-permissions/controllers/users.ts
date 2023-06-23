@@ -176,5 +176,24 @@ export default {
 
     return ctx.redirect('https://google.com');
   },
+  async becomeMember(ctx: API.Context) {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      customer: ctx.state.user.stripe_id,
+      line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
+      payment_method_types: ['paypal', 'card'],
+      discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
+      currency: 'USD',
+      success_url: `${
+        process.env.SERVER_BASE_URL || 'http://localhost:1337'
+      }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: 'http://localhost:1337',
+      metadata: {
+        user_id: ctx.state.user.id
+      }
+    });
+
+    ctx.send(session);
+  },
   async updateAddress() {}
 };

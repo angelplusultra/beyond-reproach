@@ -8,6 +8,7 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
 
   plugin.controllers.auth.register = controller.register;
   plugin.controllers.auth.onMembershipCheckoutSuccess = controller.onMembershipCheckoutSuccess;
+  plugin.controllers.auth.becomeMember = controller.becomeMember;
 
   const registerRoute = plugin.routes['content-api'].routes.find((route) => {
     if (route.path === '/auth/local/register' && route.method === 'POST') {
@@ -18,16 +19,26 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
   registerRoute &&
     (registerRoute.config.middlewares = [...registerRoute.config.middlewares, middleware.validateZipCode]);
 
-  plugin.routes['content-api'].routes.push({
-    method: 'GET',
-    path: '/auth/membership/success',
-    handler: 'auth.onMembershipCheckoutSuccess',
-    config: {
-      prefix: '',
-      auth: false,
-      middlewares: [middleware.validateCheckoutSession]
+  plugin.routes['content-api'].routes.push(
+    {
+      method: 'GET',
+      path: '/auth/membership/success',
+      handler: 'auth.onMembershipCheckoutSuccess',
+      config: {
+        prefix: '',
+        middlewares: [middleware.validateCheckoutSession]
+      }
+    },
+    {
+      method: 'GET',
+      path: '/auth/membership',
+      handler: 'auth.becomeMember',
+      config: {
+        prefix: '',
+        middlewares: []
+      }
     }
-  });
+  );
 
   return plugin;
 };
