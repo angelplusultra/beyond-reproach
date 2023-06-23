@@ -17,12 +17,26 @@ export default {
       strapi.log.info('Carts purged');
     },
     options: {
-      // cron string scheduling
-
-      // every 5 minutes
-      // cron: '*/5 * * * *',
       rule: '*/20 * * * * *',
       tz: 'America/New_York'
+    }
+  },
+  sendEmails: {
+    task: async ({ strapi }: { strapi: Strapi.Strapi }) => {
+      // const emails = ['macfittondev@gmail.com', 'marcellofitton@gmail.com', 'lareye1996@gmail.com'];
+      // await Promise.all(
+      //   emails.map(async (email) => {
+      //     await strapi.plugins['email'].services.email.send({
+      //       to: email,
+      //       subject: 'Test Email',
+      //       text: 'Hello world!',
+      //       html: 'Hello world!'
+      //     });
+      //   })
+      // );
+    },
+    options: {
+      rule: '*/40 * * * * *'
     }
   }
 };

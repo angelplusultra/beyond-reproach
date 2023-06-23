@@ -1,4 +1,8 @@
 /* eslint-disable */
+
+namespace Strapi {
+  type env = (ev: string) => void;
+}
 namespace API {
   type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
   type MealType = 'lunch' | 'dinner';
