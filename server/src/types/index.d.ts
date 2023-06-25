@@ -205,14 +205,14 @@ namespace API {
       total: number;
 
       bundle_snack: ContentType.Snack;
-      lunch_protein_substitute?: ContentType.Protein;
-      dinner_protein_substitute?: ContentType.Protein;
-      lunch_accommodate_allergies?: ContentType.Allergy[];
-      dinner_accommodate_allergies?: ContentType.Allergy[];
-      lunch_omitted_ingredients?: ContentType.Ingredient[];
-      dinner_omitted_ingredients?: ContentType.Ingredient[];
+      lunch_protein_substitute: ContentType.Protein;
+      dinner_protein_substitute: ContentType.Protein;
+      lunch_accommodate_allergies: ContentType.Allergy[];
+      dinner_accommodate_allergies: ContentType.Allergy[];
+      lunch_omitted_ingredients: ContentType.Ingredient[];
+      dinner_omitted_ingredients: ContentType.Ingredient[];
       cart_day: CartDay;
-      user?: Auth.User;
+      user: Auth.User;
     }
 
     interface CartItemBundleQuery {
