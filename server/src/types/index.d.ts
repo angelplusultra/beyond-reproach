@@ -265,6 +265,15 @@ namespace API {
       zipcode: string;
       stripe_id: string;
     }
+
+    interface ValidZipCodeQuery {
+      results: ValidZipCode[];
+    }
+
+    interface ValidZipCode {
+      zipcode: string;
+    }
+
     interface UsersPermissionsPlugin {
       controllers: {
         auth: any;

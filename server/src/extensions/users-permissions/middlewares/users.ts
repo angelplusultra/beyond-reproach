@@ -1,18 +1,27 @@
 import { NextFunction } from 'connect';
 import { stripe } from '../../../../config/stripe';
+import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
 export default {
   async validateZipCode(ctx: API.Context<API.Auth.RegisterNewUserRequestBody>, next: NextFunction) {
-    const whitelist = new Map([
-      ['92808', true],
-      ['88756', true],
-      ['55764', true]
-    ]);
+    const userZipCode = ctx.request.body.zipcode;
+    const whitelistedZipCodes = strapi.services['api::valid-zip-code.valid-zip-code'] as GenericService;
 
-    if (!whitelist.get(ctx.request.body.zipcode)) {
+    if (!/^\d{5}$/.test(userZipCode)) {
+      return ctx.badRequest('Please format the zipcode in the xxxxx format');
+    }
+
+    const validZipCodes = (await whitelistedZipCodes?.find!({})) as API.Auth.ValidZipCodeQuery;
+
+    const zipCodeList = validZipCodes?.results.map((validZipCode) => validZipCode.zipcode);
+
+    if (zipCodeList.includes(userZipCode)) {
+      // ZIP code is valid
+      await next();
+    } else {
+      // Invalid ZIP code
       return ctx.badRequest('Invalid zipcode');
     }
-    await next();
   },
 
   async validateCheckoutSession(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>, next: NextFunction) {
