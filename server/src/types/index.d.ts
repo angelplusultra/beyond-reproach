@@ -73,6 +73,9 @@ namespace API {
       user: {
         id: number;
         username: string;
+        first_name: string;
+        last_name: string;
+        mobile_number: string;
         email: string;
         password: string;
         street: string;
@@ -81,6 +84,7 @@ namespace API {
         zipcode: string;
         cartDay?: Cart.CartDay;
         stripe_id: string;
+        placed_order: boolean;
         role: {
           id: number;
           name: string;
@@ -241,6 +245,9 @@ namespace API {
     interface User {
       id: number;
       username: string;
+      first_name: string;
+      last_name: string;
+      mobile_number: string;
       email: string;
       password: string;
       provider: string;
@@ -248,6 +255,7 @@ namespace API {
       confirmationToken: string;
       confirmed: boolean;
       blocked: boolean;
+      placed_order: boolean;
       role?: number;
       cart?: number;
       allergies?: number[];
@@ -279,8 +287,11 @@ namespace API {
     }
     interface RegisterNewUserRequestBody {
       username: string;
+      first_name: string;
+      last_name: string;
       email: string;
       password: string;
+      mobile_number: string;
       street: string;
       city: string;
       state: string;
