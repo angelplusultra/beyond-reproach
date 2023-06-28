@@ -151,7 +151,7 @@ export default {
         email: sanitizedUser.email
       },
       data: {
-        stripe_id: customer.id
+        stripe_customer_id: customer.id
       }
     });
   },
@@ -162,6 +162,7 @@ export default {
     if (!ctx.state.session || !ctx.state.session.metadata) {
       return ctx.badRequest('Stripe session is not attached to the state object');
     }
+
     await users.update({
       where: {
         id: ctx.state.session.metadata.user_id
@@ -179,7 +180,7 @@ export default {
   async becomeMember(ctx: API.Context) {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      customer: ctx.state.user.stripe_id,
+      customer: ctx.state.user.stripe_customer_id,
       line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
       payment_method_types: ['paypal', 'card'],
       discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],

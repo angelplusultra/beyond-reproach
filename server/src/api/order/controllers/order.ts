@@ -15,8 +15,6 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
   const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
   const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
 
-  //! FIXME -  USER CAN MODIFY THEIR CART WHILE A CHECKOUT SESSION IS STILL OPEN PAY FOR THE OLD CART WHILE MAKING AN ORDER ENTRY WITH THE NEW CART,
-  //! TO FIX THIS WE NEED TO ATTACH THE STATE OF THE CART TO THE SESSION USING THE METADATA OBJECT AND ONORDERSUCCESS WE NEED TO MAKE AN ORDER ENTRY BASED ON THE CART ATTACHED TO THE SESSION NOT THE CART ATTACHED TO THE USER WHICH IS SUBJECT TO CHANGE DURING AN OPEN SESSION.
   return {
     async create(ctx: API.Context) {
       const subCarts = (await cartDays.find!({
@@ -171,7 +169,8 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
         };
       });
 
-      const customer = await stripe.customers.retrieve(ctx.state.user.stripe_id);
+      const customer = await stripe.customers.retrieve(ctx.state.user.stripe_customer_id);
+
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         customer: customer.id,
@@ -187,10 +186,12 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
           staged_cart_id: stagedCart.id
         }
       });
+
       ctx.send({
         session,
         message: 'Order is being processed'
       });
+
       // TODO DECIDE IF STAGED CART SHOULD BE FULLY MADE BEFORE SENDING THE CHECKOUT OR ABSTRACT THE STAGED CART TO A AN UNAWAITED SERVICE AFTER RESPONSE
       // extraServices.updateStagedCart(ctx, stagedCart.id);
     },

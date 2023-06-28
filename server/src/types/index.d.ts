@@ -83,7 +83,8 @@ namespace API {
         state: string;
         zipcode: string;
         cartDay?: Cart.CartDay;
-        stripe_id: string;
+        stripe_customer_id: string;
+        stripe_subscription_id: string;
         placed_order: boolean;
         role: {
           id: number;
@@ -263,7 +264,8 @@ namespace API {
       city: string;
       state: string;
       zipcode: string;
-      stripe_id: string;
+      stripe_customer_id: string;
+      stripe_subscription_id: string;
     }
 
     interface ValidZipCodeQuery {
