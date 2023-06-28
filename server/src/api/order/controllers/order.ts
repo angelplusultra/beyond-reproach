@@ -12,9 +12,68 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
   const cartItemBundles = strapi.service('api::cart-item-bundle.cart-item-bundle') as GenericService;
   const cartItemSnacks = strapi.service('api::cart-item-snack.cart-item-snack') as GenericService;
   const cartItemSalads = strapi.service('api::cart-item-salad.cart-item-salad') as GenericService;
+  const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
+  const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
 
+  //! FIXME -  USER CAN MODIFY THEIR CART WHILE A CHECKOUT SESSION IS STILL OPEN PAY FOR THE OLD CART WHILE MAKING AN ORDER ENTRY WITH THE NEW CART,
+  //! TO FIX THIS WE NEED TO ATTACH THE STATE OF THE CART TO THE SESSION USING THE METADATA OBJECT AND ONORDERSUCCESS WE NEED TO MAKE AN ORDER ENTRY BASED ON THE CART ATTACHED TO THE SESSION NOT THE CART ATTACHED TO THE USER WHICH IS SUBJECT TO CHANGE DURING AN OPEN SESSION.
   return {
     async create(ctx: API.Context) {
+      const subCarts = (await cartDays.find!({
+        filters: {
+          user: ctx.state.user.id
+        },
+        populate: {
+          lunches: {
+            populate: {
+              accommodate_allergies: true,
+              meal: true,
+              protein_substitute: true,
+              omitted_ingredients: true
+            }
+          },
+          dinners: {
+            populate: {
+              accommodate_allergies: true,
+              meal: true,
+              protein_substitute: true,
+              omitted_ingredients: true
+            }
+          },
+          bundles: {
+            populate: {
+              lunch: true,
+              dinner: true,
+              lunch_protein_substitute: true,
+              dinner_protein_substitute: true,
+              lunch_accommodate_allergies: true,
+              dinner_accommodate_allergies: true,
+              lunch_omitted_ingredients: true,
+              dinner_omitted_ingredients: true,
+              bundle_snack: true
+            }
+          },
+          snacks: {
+            populate: {
+              snack: true
+            }
+          },
+          salads: {
+            populate: {
+              salad: true,
+              omitted_ingredients: true
+            }
+          }
+        }
+      })) as API.Cart.CartDayQuery;
+
+      const stagedCart = await stagedCarts.create!({
+        data: {
+          user: ctx.state.user.id,
+          cart: subCarts.results
+        }
+      });
+
       const mealItems = (await cartItemMeals.find!({
         filters: {
           user: ctx.state.user.id
@@ -60,7 +119,8 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
           price_data: {
             currency: 'usd',
             product_data: {
-              name: bundleItem.lunch.title
+              name: 'Lunch and Dinner Bundle',
+              description: 'lunch and dinner bundle'
             },
             unit_amount: lunchUnit + dinnerUnit
           },
@@ -115,19 +175,24 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         customer: customer.id,
+        // Expires in 7 days
         payment_method_types: ['card'],
         success_url: `${
           process.env.SERVER_BASE_URL || 'http://localhost:1337'
         }/api/orders/success?session_id={CHECKOUT_SESSION_ID}`,
         line_items: [...mealLineItems, ...bundleLineItems, ...snackLineItems, ...saladLineItems],
         metadata: {
-          user_id: ctx.state.user.id
+          user_id: ctx.state.user.id,
+          user_email: ctx.state.user.email,
+          staged_cart_id: stagedCart.id
         }
       });
       ctx.send({
         session,
         message: 'Order is being processed'
       });
+      // TODO DECIDE IF STAGED CART SHOULD BE FULLY MADE BEFORE SENDING THE CHECKOUT OR ABSTRACT THE STAGED CART TO A AN UNAWAITED SERVICE AFTER RESPONSE
+      // extraServices.updateStagedCart(ctx, stagedCart.id);
     },
     onOrderCheckoutSuccess(ctx: API.Context) {
       ctx.send('Order checkout success');
