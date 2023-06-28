@@ -76,5 +76,12 @@ export default {
     }
 
     await next();
+  },
+  async preventOrder(ctx: API.Context, next: NextFunction) {
+    if (ctx.state.user.placed_order === true) {
+      return ctx.badRequest('You can only place one order per week');
+    }
+
+    await next();
   }
 };

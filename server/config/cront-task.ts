@@ -14,10 +14,16 @@ export default {
         }
       });
 
-      strapi.log.info('Carts purged');
+      await strapi.db.query('plugin::users-permissions.user').updateMany({
+        data: {
+          placed_order: false
+        }
+      });
+
+      strapi.log.info('Carts purged and Users reset');
     },
     options: {
-      rule: '*/20 * * * * *',
+      rule: '*/50 * * * * *',
       tz: 'America/New_York'
     }
   }

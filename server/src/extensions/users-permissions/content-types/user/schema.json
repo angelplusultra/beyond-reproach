@@ -114,7 +114,7 @@
       "type": "string",
       "required": true
     },
-    "placedOrder": {
+    "placed_order": {
       "type": "boolean",
       "default": false
     }

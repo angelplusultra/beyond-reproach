@@ -194,7 +194,20 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
       // TODO DECIDE IF STAGED CART SHOULD BE FULLY MADE BEFORE SENDING THE CHECKOUT OR ABSTRACT THE STAGED CART TO A AN UNAWAITED SERVICE AFTER RESPONSE
       // extraServices.updateStagedCart(ctx, stagedCart.id);
     },
-    onOrderCheckoutSuccess(ctx: API.Context) {
+    async onOrderCheckoutSuccess(ctx: API.Context) {
+      if (!ctx.state.session?.metadata?.user_id) {
+        return ctx.badRequest('user_id is not attached to session metadata');
+      }
+
+      const users = strapi.db.query('plugin::users-permissions.user');
+
+      await users.update!({
+        where: { id: ctx.state.session.metadata.user_id },
+        data: {
+          placed_order: true
+        }
+      });
+
       ctx.send('Order checkout success');
       extraServices.createOrder(ctx);
     }
