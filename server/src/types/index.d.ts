@@ -109,6 +109,13 @@ namespace API {
       id: string;
     }
 
+    interface StagedCart {
+      cart: CartDay[];
+      user: Auth.User;
+      stripe_transaction_id: string;
+      total: number;
+    }
+
     interface CartQuery {
       results: Cart[];
     }
