@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "staged_carts",
+  "info": {
+    "singularName": "staged-cart",
+    "pluralName": "staged-carts",
+    "displayName": "StagedCart"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "cart": {
+      "type": "json",
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}
