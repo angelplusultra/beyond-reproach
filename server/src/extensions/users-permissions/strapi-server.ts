@@ -9,6 +9,7 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
   plugin.controllers.auth.register = controller.register;
   plugin.controllers.auth.onMembershipCheckoutSuccess = controller.onMembershipCheckoutSuccess;
   plugin.controllers.auth.becomeMember = controller.becomeMember;
+  plugin.controllers.auth.unsubscribe = controller.unsubscribe;
 
   const registerRoute = plugin.routes['content-api'].routes.find((route) => {
     if (route.path === '/auth/local/register' && route.method === 'POST') {
@@ -33,6 +34,15 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
       method: 'GET',
       path: '/auth/membership',
       handler: 'auth.becomeMember',
+      config: {
+        prefix: '',
+        middlewares: []
+      }
+    },
+    {
+      method: 'DELETE',
+      path: '/auth/membership',
+      handler: 'auth.unsubscribe',
       config: {
         prefix: '',
         middlewares: []

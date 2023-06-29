@@ -98,7 +98,7 @@
       "target": "api::order.order",
       "mappedBy": "user"
     },
-    "stripe_customer__id": {
+    "stripe_customer_id": {
       "type": "string"
     },
     "mobile_number": {
