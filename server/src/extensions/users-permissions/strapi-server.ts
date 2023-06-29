@@ -18,7 +18,11 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
   });
 
   registerRoute &&
-    (registerRoute.config.middlewares = [...registerRoute.config.middlewares, middleware.validateZipCode]);
+    (registerRoute.config.middlewares = [
+      ...registerRoute.config.middlewares,
+      middleware.formatMobileNumber,
+      middleware.validateZipCode
+    ]);
 
   plugin.routes['content-api'].routes.push(
     {
