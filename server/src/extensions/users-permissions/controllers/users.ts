@@ -168,7 +168,8 @@ export default {
         id: ctx.state.session.metadata.user_id
       },
       data: {
-        role: 3
+        role: 3,
+        stripe_subscription_id: ctx.state.session.subscription
       },
       populate: { role: true }
     });
@@ -195,6 +196,23 @@ export default {
     });
 
     ctx.send(session);
+  },
+  async unsubscribe(ctx: API.Context) {
+    const users = strapi.db.query('plugin::users-permissions.user');
+
+    await stripe.subscriptions.cancel(ctx.state.user.stripe_subscription_id);
+
+    await users.update({
+      where: {
+        id: ctx.state.user.id
+      },
+      data: {
+        role: 1
+      },
+      populate: { role: true }
+    });
+
+    ctx.send('You have been successfully unsubscribed!');
   },
   async updateAddress() {}
 };
