@@ -1,3 +1,5 @@
+import { client } from './twilio';
+
 export default {
   purgeCarts: {
     task: async ({ strapi }: { strapi: Strapi.Strapi }) => {
@@ -24,6 +26,37 @@ export default {
     },
     options: {
       rule: '*/50 * * * * *',
+      tz: 'America/New_York'
+    }
+  },
+  testText: {
+    task: async ({ strapi }: { strapi: Strapi.Strapi }) => {
+      const numbers = ['+19494909453', '+15593672828'];
+
+      for (const number of numbers) {
+        try {
+          await client.messages.create({
+            body: 'This is a test text from Strapi',
+            from: process.env.TWILIO_SERVICE_SID,
+            to: number
+          });
+        } catch (error: any) {
+          if (error.code === 21614) {
+            strapi.log.info('Test text not sent because number is not verified');
+            continue;
+          }
+
+          if (error.code === 21610) {
+            continue;
+          }
+
+          strapi.log.error(error.message);
+        }
+      }
+      strapi.log.info('Messages Sent!');
+    },
+    options: {
+      rule: '*/20 * * * * *',
       tz: 'America/New_York'
     }
   }
