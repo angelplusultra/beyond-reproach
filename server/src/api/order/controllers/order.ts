@@ -210,7 +210,9 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
       });
 
       ctx.send('Order checkout success');
+
       extraServices.createOrder(ctx);
+      extraServices.postOrderCleanup(ctx);
     }
   };
 });

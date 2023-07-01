@@ -557,5 +557,49 @@ export const extraServices = {
         cart: subCarts
       }
     });
+  },
+  async postOrderCleanup(ctx: API.Context) {
+    const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
+
+    if (!ctx.state.session || !ctx.state.session.metadata) {
+      return ctx.badRequest('Session is not appended to the state object');
+    }
+
+    await stagedCarts.delete!(ctx.state.session.metadata.staged_cart_id as never, {});
+
+    const toDeleteCartItemMeals = await strapi.db
+      .query('api::cart-item-meal.cart-item-meal')
+      .findMany({ where: { user: ctx.state.session.metadata.user_id } });
+    await strapi.db
+      .query('api::cart-item-meal.cart-item-meal')
+      .deleteMany({ where: { id: { $in: toDeleteCartItemMeals.map(({ id }) => id) } } });
+
+    const toDeleteCartItemBundles = await strapi.db
+      .query('api::cart-item-bundle.cart-item-bundle')
+      .findMany({ where: { user: ctx.state.session.metadata.user_id } });
+    await strapi.db
+      .query('api::cart-item-bundle.cart-item-bundle')
+      .deleteMany({ where: { id: { $in: toDeleteCartItemBundles.map(({ id }) => id) } } });
+
+    const toDeleteCartItemSnack = await strapi.db
+      .query('api::cart-item-snack.cart-item-snack')
+      .findMany({ where: { user: ctx.state.session.metadata.user_id } });
+    await strapi.db
+      .query('api::cart-item-snack.cart-item-snack')
+      .deleteMany({ where: { id: { $in: toDeleteCartItemSnack.map(({ id }) => id) } } });
+
+    const toDeleteCartItemSalad = await strapi.db
+      .query('api::cart-item-salad.cart-item-salad')
+      .findMany({ where: { user: ctx.state.session.metadata.user_id } });
+    await strapi.db
+      .query('api::cart-item-salad.cart-item-salad')
+      .deleteMany({ where: { id: { $in: toDeleteCartItemSalad.map(({ id }) => id) } } });
+
+    await strapi.db.query('api::cart.cart').update({
+      where: { user: ctx.state.session.metadata.user_id },
+      data: {
+        total: 0
+      }
+    });
   }
 };
