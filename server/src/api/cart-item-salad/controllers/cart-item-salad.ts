@@ -65,7 +65,7 @@ export default factories.createCoreController('api::cart-item-salad.cart-item-sa
         });
 
         const response = {
-          message: `Successfully added a new Salad Item to your cart for ${day}`,
+          message: `You have succesfully added a new Salad Item to your cart for ${day}`,
           ...(environment === 'development' && { salad_item: newSaladItem })
         };
 
