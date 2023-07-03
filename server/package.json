@@ -4,14 +4,15 @@
   "version": "0.1.0",
   "description": "A Strapi application",
   "scripts": {
-    "dev": " NODE_ENV=development strapi develop",
-    "start": "NODE_ENV=production strapi start",
+    "dev": "cross-env NODE_ENV=development strapi develop",
+    "start": "cross-env NODE_ENV=production strapi start",
     "build": "strapi build",
     "strapi": "strapi",
     "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "cross-env": "^7.0.3",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^35.0.0",
     "eslint-plugin-import": "^2.25.2",
