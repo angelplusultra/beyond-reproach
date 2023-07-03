@@ -2,50 +2,58 @@ import { NextFunction } from 'connect';
 import { stripe } from '../../../../config/stripe';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
+import * as yup from 'yup';
 
 export default {
-  async formatMobileNumber(ctx: API.Context<API.Auth.RegisterNewUserRequestBody>, next: NextFunction) {
+  async formatMobileNumber(
+    ctx: API.Context<API.Auth.RegisterNewUserRequestBody | API.Auth.UpdateMeRequestBody>,
+    next: NextFunction
+  ) {
     const userMobileNumber = ctx.request.body.mobile_number;
 
     const phoneUtil = PhoneNumberUtil.getInstance();
     let phoneNumber;
 
-    try {
-      phoneNumber = phoneUtil.parse(userMobileNumber);
-    } catch (error) {
-      return ctx.badRequest('Please provide a valid mobile number.');
+    if (userMobileNumber) {
+      try {
+        phoneNumber = phoneUtil.parse(userMobileNumber);
+      } catch (error) {
+        return ctx.badRequest('Please provide a valid mobile number.');
+      }
+
+      if (!phoneUtil.isValidNumber(phoneNumber)) {
+        return ctx.badRequest('Please provide a valid mobile number.');
+      }
+
+      const formattedMobileNumber = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
+
+      ctx.request.body.mobile_number = formattedMobileNumber;
     }
-
-    if (!phoneUtil.isValidNumber(phoneNumber)) {
-      return ctx.badRequest('Please provide a valid mobile number.');
-    }
-
-    const formattedMobileNumber = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
-
-    ctx.request.body.mobile_number = formattedMobileNumber;
 
     await next();
   },
 
-  async validateZipCode(ctx: API.Context<API.Auth.RegisterNewUserRequestBody>, next: NextFunction) {
+  async validateZipCode(
+    ctx: API.Context<API.Auth.RegisterNewUserRequestBody | API.Auth.UpdateMeRequestBody>,
+    next: NextFunction
+  ) {
     const userZipCode = ctx.request.body.zipcode;
     const whitelistedZipCodes = strapi.services['api::valid-zip-code.valid-zip-code'] as GenericService;
 
-    if (!/^\d{5}$/.test(userZipCode)) {
-      return ctx.badRequest('Please format the zipcode in the xxxxx format');
+    if (userZipCode) {
+      if (!/^\d{5}$/.test(userZipCode)) {
+        return ctx.badRequest('Please format the zipcode in the xxxxx format');
+      }
+
+      const validZipCodes = (await whitelistedZipCodes?.find!({})) as API.Auth.ValidZipCodeQuery;
+
+      const zipCodeList = validZipCodes?.results.map((validZipCode) => validZipCode.zipcode);
+
+      if (!zipCodeList.includes(userZipCode)) {
+        return ctx.badRequest('Zipcode is not in our whitelist');
+      }
     }
-
-    const validZipCodes = (await whitelistedZipCodes?.find!({})) as API.Auth.ValidZipCodeQuery;
-
-    const zipCodeList = validZipCodes?.results.map((validZipCode) => validZipCode.zipcode);
-
-    if (zipCodeList.includes(userZipCode)) {
-      // ZIP code is valid
-      await next();
-    } else {
-      // Invalid ZIP code
-      return ctx.badRequest('Invalid zipcode');
-    }
+    await next();
   },
 
   async validateCheckoutSession(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>, next: NextFunction) {
@@ -69,5 +77,51 @@ export default {
         return ctx.badRequest(error.message, { error });
       }
     }
+  },
+
+  async validateUpdateMeRequestBodySchema(ctx: API.Context<API.Auth.UpdateMeRequestBody>, next: NextFunction) {
+    const updateMeRequestBodySchema = yup.object().shape(
+      {
+        mobile_number: yup.string(),
+        street: yup
+          .string()
+          .typeError('street must be string type')
+          .when(['zipcode', 'city'], {
+            is: (zipcode: string, city: string) => zipcode || city,
+            then: (schema) => schema.required('street is required')
+          }),
+        city: yup
+          .string()
+          .typeError('city must be string type')
+          .when(['street', 'zipcode'], {
+            is: (street: string, zipcode: string) => street || zipcode,
+            then: (schema) => schema.required('city is required')
+          }),
+        zipcode: yup
+          .string()
+          .typeError('zipcode must be string type')
+          .when(['street', 'city'], {
+            is: (street: string, city: string) => street || city,
+            then: (schema) => schema.required('zipcode is required')
+          })
+      },
+      [
+        ['zipcode', 'city'],
+        ['street', 'zipcode'],
+        ['street', 'city']
+      ]
+    );
+
+    try {
+      await updateMeRequestBodySchema.validate(ctx.request.body, {
+        strict: true
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        return ctx.badRequest(error.message);
+      }
+    }
+
+    await next();
   }
 };
