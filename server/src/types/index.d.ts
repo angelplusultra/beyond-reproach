@@ -312,6 +312,13 @@ namespace API {
     interface MembershipCheckoutSuccessQuery {
       session_id?: string;
     }
+
+    interface UpdateMeRequestBody {
+      street?: string;
+      city?: string;
+      zipcode?: string;
+      mobile_number?: string;
+    }
   }
 
   interface UpdateCartItemMealRequestBody {

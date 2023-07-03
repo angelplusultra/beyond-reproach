@@ -10,6 +10,7 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
   plugin.controllers.auth.onMembershipCheckoutSuccess = controller.onMembershipCheckoutSuccess;
   plugin.controllers.auth.becomeMember = controller.becomeMember;
   plugin.controllers.auth.unsubscribe = controller.unsubscribe;
+  plugin.controllers.auth.updateMe = controller.updateMe;
 
   const registerRoute = plugin.routes['content-api'].routes.find((route) => {
     if (route.path === '/auth/local/register' && route.method === 'POST') {
@@ -50,6 +51,19 @@ export default (plugin: API.Auth.UsersPermissionsPlugin) => {
       config: {
         prefix: '',
         middlewares: []
+      }
+    },
+    {
+      method: 'PUT',
+      path: '/users/me/update',
+      handler: 'auth.updateMe',
+      config: {
+        prefix: '',
+        middlewares: [
+          middleware.validateUpdateMeRequestBodySchema,
+          middleware.validateZipCode,
+          middleware.formatMobileNumber
+        ]
       }
     }
   );
