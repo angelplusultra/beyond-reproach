@@ -3,17 +3,18 @@
  */
 
 import { factories } from '@strapi/strapi';
+import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
 export default factories.createCoreController('api::cart.cart', ({ strapi }) => {
+  const carts = strapi.service('api::cart.cart') as GenericService;
   return {
     async find(ctx: API.Context) {
       let message;
 
       try {
-        const myCart = await strapi.db.query('api::cart.cart').findOne({
-          where: { user: ctx.state.user.id },
+        const myCart = (await carts.find!({
+          filters: { user: ctx.state.user.id },
           populate: {
-            //@ts-ignore
             days: {
               populate: {
                 lunches: {
@@ -59,7 +60,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
               }
             }
           }
-        });
+        })) as API.Cart.CartQuery;
 
         if (!myCart) {
           message = 'Something went wrong when retrieving cart';
@@ -69,7 +70,7 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
         message = 'Cart successfully retrieved';
         const response = {
           message: message,
-          cart: myCart
+          cart: myCart.results[0]
         };
         return ctx.send(response);
       } catch (error) {
