@@ -175,8 +175,6 @@ export default {
       populate: { role: true }
     });
 
-    // TODO REDIRECT USER BACK TO FRONTEND
-
     return ctx.redirect('https://google.com');
   },
   async becomeMember(ctx: API.Context) {

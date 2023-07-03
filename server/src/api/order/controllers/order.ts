@@ -17,6 +17,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
 
   return {
     async create(ctx: API.Context) {
+      // TODO ADD TRY/CATCH AND REFINE RESPONSE
       const subCarts = (await cartDays.find!({
         filters: {
           user: ctx.state.user.id
@@ -196,6 +197,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
       // extraServices.updateStagedCart(ctx, stagedCart.id);
     },
     async onOrderCheckoutSuccess(ctx: API.Context) {
+      // TODO ADD TRY/CATCH AND REFINE RESPONSE
       if (!ctx.state.session?.metadata?.user_id) {
         return ctx.badRequest('user_id is not attached to session metadata');
       }

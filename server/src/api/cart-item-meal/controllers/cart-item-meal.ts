@@ -5,8 +5,6 @@
 import { factories } from '@strapi/strapi';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
 
-//TODO Must validate whether the subcart to be modified is owned by the user making the request, Middleware?
-
 export default factories.createCoreController('api::cart-item-meal.cart-item-meal', ({ strapi }) => {
   const mealItems = strapi.service('api::cart-item-meal.cart-item-meal') as GenericService;
   const meals = strapi.service('api::meal.meal') as GenericService;

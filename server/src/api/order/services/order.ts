@@ -10,6 +10,7 @@ export default factories.createCoreService('api::order.order');
 export const extraServices = {
   async createOrder(ctx: API.Context) {
     // TODO FIGURE OUT IF THE CLIENT WANTS THE MORE SIMPLIFIED VERSION THE USER RECEIVES OR THE TABLE BREAKDOWN
+    // TODO   ADD TRY/CATCH AND REFINE RESPONSE
     const orders = strapi.service('api::order.order') as GenericService;
     const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
 
@@ -559,6 +560,7 @@ export const extraServices = {
     });
   },
   async postOrderCleanup(ctx: API.Context) {
+    // TODO ADD TRY/CATCH AND REFINE RESPONSE
     const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
 
     if (!ctx.state.session || !ctx.state.session.metadata) {
