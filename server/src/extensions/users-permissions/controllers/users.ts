@@ -113,6 +113,7 @@ export default {
         postal_code: sanitizedUser.zipcode,
         state: sanitizedUser.state
       },
+      phone: sanitizedUser.mobile_number,
       metadata: {
         user_id: sanitizedUser.id
       }
@@ -213,6 +214,40 @@ export default {
     });
 
     ctx.send('You have been successfully unsubscribed!');
+  },
+  async updateMe(ctx: API.Context<API.Auth.UpdateMeRequestBody>) {
+    const users = strapi.db.query('plugin::users-permissions.user');
+
+    await users.update({
+      where: {
+        id: ctx.state.user.id
+      },
+      data: {
+        ...(ctx.request.body.mobile_number && { mobile_number: ctx.request.body.mobile_number }),
+        ...(ctx.request.body.street && { street: ctx.request.body.street }),
+        ...(ctx.request.body.city && { city: ctx.request.body.city }),
+        ...(ctx.request.body.zipcode && { zipcode: ctx.request.body.zipcode })
+      }
+    });
+
+    {
+      await stripe.customers.update(ctx.state.user.stripe_customer_id, {
+        ...(ctx.request.body.street &&
+          ctx.request.body.city &&
+          ctx.request.body.zipcode && {
+            address: {
+              line1: ctx.request.body.street,
+              postal_code: ctx.request.body.zipcode,
+              city: ctx.request.body.city
+            }
+          }),
+        ...(ctx.request.body.mobile_number && {
+          phone: ctx.request.body.mobile_number
+        })
+      });
+    }
+
+    ctx.send('Your info has been succesfully updated!');
   },
   async updateAddress() {}
 };
