@@ -5,23 +5,29 @@ import * as yup from 'yup';
 export default {
   async validateCartDayOwnership(ctx: API.Context<API.Cart.CreateNewCartItemSaladRequestBody>, next: NextFunction) {
     const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
-    const subCart = await cartDays.findOne!(ctx.request.body.cart_day, {
-      populate: {
-        user: true,
-        salads: true
+    try {
+      const subCart = await cartDays.findOne!(ctx.request.body.cart_day, {
+        populate: {
+          user: true,
+          salads: true
+        }
+      });
+
+      if (!subCart) {
+        return ctx.badRequest('Sub Cart not found');
       }
-    });
 
-    if (!subCart) {
-      return ctx.badRequest('Sub Cart not found');
+      if (subCart.user?.id !== ctx.state.user.id) {
+        return ctx.badRequest('You are not the owner of the provided Sub Cart');
+      }
+      ctx.state.user.cartDay = subCart;
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
     }
-
-    if (subCart.user?.id !== ctx.state.user.id) {
-      return ctx.badRequest('You are not the owner of the provided Sub Cart');
-    }
-    ctx.state.user.cartDay = subCart;
-
-    return next();
+    await next();
   },
 
   async validateCreateRequestBodySchema(
@@ -42,33 +48,40 @@ export default {
       await createCartItemSaladRequestBodySchema.validate(ctx.request.body, {});
     } catch (error) {
       if (error instanceof Error) {
-        return ctx.badRequest(error.message);
+        return ctx.badRequest(error.message, { error });
       }
     }
-    return next();
+    await next();
   },
   async validateCartItemSaladOwnership(ctx: API.Context, next: NextFunction) {
     const saladItemId = ctx.params.id;
 
-    const saladItem: API.Cart.CartItemSalad = await strapi.service('api::cart-item-salad.cart-item-salad')!.findOne!(
-      saladItemId,
-      {
-        populate: {
-          user: true,
-          salad: true
+    try {
+      const saladItem: API.Cart.CartItemSalad = await strapi.service('api::cart-item-salad.cart-item-salad')!.findOne!(
+        saladItemId,
+        {
+          populate: {
+            user: true,
+            salad: true
+          }
         }
+      );
+
+      if (!saladItem) {
+        return ctx.badRequest('Salad Item does not exist');
       }
-    );
+      if (saladItem.user?.id !== ctx.state.user.id) {
+        return ctx.badRequest('You are not the owner of the provided Salad Item');
+      }
 
-    if (!saladItem) {
-      return ctx.badRequest('Salad Item does not exist');
+      ctx.state.saladItem = saladItem;
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
     }
-    if (saladItem.user?.id !== ctx.state.user.id) {
-      return ctx.badRequest('You are not the owner of the provided Salad Item');
-    }
 
-    ctx.state.saladItem = saladItem;
-
-    return next();
+    await next();
   }
 };
