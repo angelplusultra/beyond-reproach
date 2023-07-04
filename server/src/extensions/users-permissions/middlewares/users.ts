@@ -12,22 +12,24 @@ export default {
     const userMobileNumber = ctx.request.body.mobile_number;
 
     const phoneUtil = PhoneNumberUtil.getInstance();
-    let phoneNumber;
 
     if (userMobileNumber) {
       try {
-        phoneNumber = phoneUtil.parse(userMobileNumber);
+        const phoneNumber = phoneUtil.parse(userMobileNumber);
+
+        if (!phoneUtil.isValidNumber(phoneNumber)) {
+          return ctx.badRequest('Please provide a valid mobile number.');
+        }
+
+        const formattedMobileNumber = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
+
+        ctx.request.body.mobile_number = formattedMobileNumber;
       } catch (error) {
-        return ctx.badRequest('Please provide a valid mobile number.');
+        if (error instanceof Error) {
+          strapi.log.error(error.message);
+          return ctx.badRequest(error.message, { error });
+        }
       }
-
-      if (!phoneUtil.isValidNumber(phoneNumber)) {
-        return ctx.badRequest('Please provide a valid mobile number.');
-      }
-
-      const formattedMobileNumber = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
-
-      ctx.request.body.mobile_number = formattedMobileNumber;
     }
 
     await next();
@@ -45,12 +47,19 @@ export default {
         return ctx.badRequest('Please format the zipcode in the xxxxx format');
       }
 
-      const validZipCodes = (await whitelistedZipCodes?.find!({})) as API.Auth.ValidZipCodeQuery;
+      try {
+        const validZipCodes = (await whitelistedZipCodes?.find!({})) as API.Auth.ValidZipCodeQuery;
 
-      const zipCodeList = validZipCodes?.results.map((validZipCode) => validZipCode.zipcode);
+        const zipCodeList = validZipCodes?.results.map((validZipCode) => validZipCode.zipcode);
 
-      if (!zipCodeList.includes(userZipCode)) {
-        return ctx.badRequest('Zipcode is not in our whitelist');
+        if (!zipCodeList.includes(userZipCode)) {
+          return ctx.badRequest('Zipcode is not in our whitelist');
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          strapi.log.error(error.message);
+          return ctx.badRequest(error.message, { error });
+        }
       }
     }
     await next();
@@ -74,6 +83,7 @@ export default {
       }
     } catch (error) {
       if (error instanceof Error) {
+        strapi.log.error(error.message);
         return ctx.badRequest(error.message, { error });
       }
     }
@@ -118,7 +128,8 @@ export default {
       });
     } catch (error) {
       if (error instanceof Error) {
-        return ctx.badRequest(error.message);
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
       }
     }
 
