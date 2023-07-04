@@ -172,88 +172,125 @@ export default {
       return ctx.badRequest('Stripe session is not attached to the state object');
     }
 
-    await users.update({
-      where: {
-        id: ctx.state.session.metadata.user_id
-      },
-      data: {
-        role: 3,
-        stripe_subscription_id: ctx.state.session.subscription
-      },
-      populate: { role: true }
-    });
+    try {
+      await users.update({
+        where: {
+          id: ctx.state.session.metadata.user_id
+        },
+        data: {
+          role: 3,
+          stripe_subscription_id: ctx.state.session.subscription
+        },
+        populate: { role: true }
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
+    }
 
     return ctx.redirect('https://google.com');
   },
   async becomeMember(ctx: API.Context) {
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      customer: ctx.state.user.stripe_customer_id,
-      line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
-      payment_method_types: ['paypal', 'card'],
-      discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
-      currency: 'USD',
-      success_url: `${
-        process.env.SERVER_BASE_URL || 'http://localhost:1337'
-      }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: 'http://localhost:1337',
-      metadata: {
-        user_id: ctx.state.user.id
-      }
-    });
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        customer: ctx.state.user.stripe_customer_id,
+        line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
+        payment_method_types: ['paypal', 'card'],
+        discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
+        currency: 'USD',
+        success_url: `${
+          process.env.SERVER_BASE_URL || 'http://localhost:1337'
+        }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: 'http://localhost:1337',
+        metadata: {
+          user_id: ctx.state.user.id
+        }
+      });
 
-    ctx.send(session);
+      const response = {
+        message: 'A checkout session for membership has been succesfully created',
+        session_url: session.url
+      };
+
+      ctx.send(response);
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
+    }
   },
   async unsubscribe(ctx: API.Context) {
     const users = strapi.db.query('plugin::users-permissions.user');
 
-    await stripe.subscriptions.cancel(ctx.state.user.stripe_subscription_id);
+    try {
+      await stripe.subscriptions.cancel(ctx.state.user.stripe_subscription_id);
 
-    await users.update({
-      where: {
-        id: ctx.state.user.id
-      },
-      data: {
-        role: 1
-      },
-      populate: { role: true }
-    });
+      await users.update({
+        where: {
+          id: ctx.state.user.id
+        },
+        data: {
+          role: 1
+        },
+        populate: { role: true }
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
+    }
 
-    ctx.send('You have been successfully unsubscribed!');
+    const response = {
+      message: 'You have been successfully unsubscribed!'
+    };
+
+    ctx.send(response);
   },
   async updateMe(ctx: API.Context<API.Auth.UpdateMeRequestBody>) {
     const users = strapi.db.query('plugin::users-permissions.user');
-
-    await users.update({
-      where: {
-        id: ctx.state.user.id
-      },
-      data: {
-        ...(ctx.request.body.mobile_number && { mobile_number: ctx.request.body.mobile_number }),
-        ...(ctx.request.body.street && { street: ctx.request.body.street }),
-        ...(ctx.request.body.city && { city: ctx.request.body.city }),
-        ...(ctx.request.body.zipcode && { zipcode: ctx.request.body.zipcode })
-      }
-    });
-
-    {
-      await stripe.customers.update(ctx.state.user.stripe_customer_id, {
-        ...(ctx.request.body.street &&
-          ctx.request.body.city &&
-          ctx.request.body.zipcode && {
-            address: {
-              line1: ctx.request.body.street,
-              postal_code: ctx.request.body.zipcode,
-              city: ctx.request.body.city
-            }
-          }),
-        ...(ctx.request.body.mobile_number && {
-          phone: ctx.request.body.mobile_number
-        })
+    try {
+      await users.update({
+        where: {
+          id: ctx.state.user.id
+        },
+        data: {
+          ...(ctx.request.body.mobile_number && { mobile_number: ctx.request.body.mobile_number }),
+          ...(ctx.request.body.street && { street: ctx.request.body.street }),
+          ...(ctx.request.body.city && { city: ctx.request.body.city }),
+          ...(ctx.request.body.zipcode && { zipcode: ctx.request.body.zipcode })
+        }
       });
-    }
 
-    ctx.send('Your info has been succesfully updated!');
-  },
-  async updateAddress() {}
+      {
+        await stripe.customers.update(ctx.state.user.stripe_customer_id, {
+          ...(ctx.request.body.street &&
+            ctx.request.body.city &&
+            ctx.request.body.zipcode && {
+              address: {
+                line1: ctx.request.body.street,
+                postal_code: ctx.request.body.zipcode,
+                city: ctx.request.body.city
+              }
+            }),
+          ...(ctx.request.body.mobile_number && {
+            phone: ctx.request.body.mobile_number
+          })
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
+    }
+    const response = {
+      message: 'Your info has been succesfully updated!'
+    };
+    return ctx.send(response);
+  }
 };
