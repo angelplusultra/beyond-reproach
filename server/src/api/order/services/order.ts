@@ -288,12 +288,12 @@ export const extraServices = {
                   ${
                     lunch?.protein_substitute?.title
                       ? `<div>Protein Substitute: ${lunch?.protein_substitute?.title}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     lunch?.accommodate_allergies.length > 0
                       ? `<div>Accommodate Allergies: ${accommodateAllergies}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     lunch?.omitted_ingredients.length > 0 ? `<div>Omitted Ingredients: ${omittedIngredients}</div>` : ''
@@ -317,17 +317,17 @@ export const extraServices = {
                   ${
                     dinner?.protein_substitute?.title
                       ? `<div>Protein Substitute: ${dinner?.protein_substitute?.title}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     dinner?.accommodate_allergies.length > 0
                       ? `<div>Accommodate Allergies: ${accommodateAllergies}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     dinner?.omitted_ingredients.length > 0
                       ? `<div>Omitted Ingredients: ${omittedIngredients}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                 </div><br/><br/>`;
               })
@@ -353,32 +353,32 @@ export const extraServices = {
                   ${
                     bundle?.lunch_protein_substitute?.title
                       ? `<div>Lunch Protein Substitute: ${bundle?.lunch_protein_substitute?.title}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     bundle?.dinner_protein_substitute?.title
                       ? `<div>Dinner Protein Substitute: ${bundle?.dinner_protein_substitute?.title}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     bundle?.lunch_accommodate_allergies.length > 0
                       ? `<div>Lunch Accommodate Allergies: ${lunchAccommodateAllergies}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     bundle?.dinner_accommodate_allergies.length > 0
                       ? `<div>Dinner Accommodate Allergies: ${dinnerAccommodateAllergies}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     bundle?.lunch_omitted_ingredients.length > 0
                       ? `<div>Lunch Omitted Ingredients: ${lunchOmittedIngredients}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${
                     bundle?.dinner_omitted_ingredients.length > 0
                       ? `<div>Dinner Omitted Ingredients: ${dinnerOmittedIngredients}</div>`
-                      : ''
+                      : '<div></div>'
                   }
                   ${bundle?.bundle_snack?.title ? `<div>Bundle Snack: ${bundle?.bundle_snack?.title}</div>` : ''}
                 </div><br/><br/>`;
@@ -418,63 +418,43 @@ export const extraServices = {
           : ``;
 
       if (cart.day === 'monday') {
-        mondayBreakdowns = `<div>
-            <h2>Monday</h2>
-            ${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}
-            ${dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`}
-            ${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}
-            ${snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`}
-            ${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}
-            </div>`;
+        mondayBreakdowns = `<div><h2>Monday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
+          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
+        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
+          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
       }
-
       if (cart.day === 'tuesday') {
-        tuesdayBreakdowns = `<div>
-            <h2>Tuesday</h2>
-            ${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}
-            ${dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`}
-            ${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}
-            ${snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`}
-            ${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}
-            </div>`;
+        tuesdayBreakdowns = `<div><h2>Tuesday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
+          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
+        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
+          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
       }
-
       if (cart.day === 'wednesday') {
-        wednesdayBreakdowns = `<div>
-            <h2>Wednesday</h2>
-            ${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}
-            ${dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`}
-            ${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}
-            ${snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`}
-            ${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}
-            </div>`;
+        wednesdayBreakdowns = `<div><h2>Wednesday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
+          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
+        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
+          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
       }
-
       if (cart.day === 'thursday') {
-        thursdayBreakdowns = `<div>
-            <h2>Thursday</h2>
-            ${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}
-            ${dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`}
-            ${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}
-            ${snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`}
-            ${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}
-            </div>`;
+        thursdayBreakdowns = `<div><h2>Thursday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
+          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
+        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
+          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
       }
-
       if (cart.day === 'friday') {
-        fridayBreakdowns = `<div>
-            <h2>Friday</h2>
-            ${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}
-            ${dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`}
-            ${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}
-            ${snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`}
-            ${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}
-            </div>`;
+        fridayBreakdowns = `<div><h2>Friday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
+          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
+        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
+          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
       }
     });
     const orderSheetV2 = `<div>
         <h1>Order Breakdown for ${ctx.state.session.metadata.user_email}</h1>
-
         <div>
         ${mondayBreakdowns}
         ${tuesdayBreakdowns}
