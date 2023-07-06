@@ -13,6 +13,13 @@ export const extraServices = {
     // TODO   ADD TRY/CATCH AND REFINE RESPONSE
     const orders = strapi.service('api::order.order') as GenericService;
     const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
+    const users = strapi.db.query('plugin::users-permissions.user');
+
+    const user = (await users.findOne({
+      where: {
+        id: ctx.state.session!.metadata!.user_id
+      }
+    })) as API.Auth.User;
 
     if (!ctx.state.session || !ctx.state.session.metadata) {
       return ctx.badRequest('Session is not appended to the state object');
@@ -410,7 +417,9 @@ export const extraServices = {
                   <div>Salad: ${salad?.salad?.title}</div>
                   <div>Quantity: ${salad?.quantity}</div>
                   ${
-                    salad?.omitted_ingredients.length > 0 ? `<div>Omitted Ingredients: ${omittedIngredients}</div>` : ''
+                    salad?.omitted_ingredients.length > 0
+                      ? `<div>Omitted Ingredients: ${omittedIngredients}</div>`
+                      : '<div></div>'
                   }
                 </div><br/><br/>`;
               })
@@ -454,13 +463,16 @@ export const extraServices = {
       }
     });
     const orderSheetV2 = `<div>
-        <h1>Order Breakdown for ${ctx.state.session.metadata.user_email}</h1>
+        <h2>Order Breakdown for ${ctx.state.session.metadata.user_email}</h2>
+        <p>${user.first_name} ${user.last_name}<br>${user.street}<br>${user.city}<br>${user.state}<br>${
+      user.zipcode
+    }</p>
         <div>
-        ${mondayBreakdowns}
-        ${tuesdayBreakdowns}
-        ${wednesdayBreakdowns}
-        ${thursdayBreakdowns}
-        ${fridayBreakdowns}
+        ${mondayBreakdowns ? mondayBreakdowns : '<div></div>'}
+        ${tuesdayBreakdowns ? tuesdayBreakdowns : '<div></div>'}
+        ${wednesdayBreakdowns ? wednesdayBreakdowns : '<div></div>'}
+        ${thursdayBreakdowns ? thursdayBreakdowns : '<div></div>'}
+        ${fridayBreakdowns ? fridayBreakdowns : '<div></div>'}
         </div>
         </div>`;
 
