@@ -21,7 +21,7 @@
     "order": {
       "type": "richtext"
     },
-    "stripe_transaction_id": {
+    "stripe_session_id": {
       "type": "string"
     },
     "total": {

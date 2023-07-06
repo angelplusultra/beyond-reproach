@@ -480,7 +480,8 @@ export const extraServices = {
       data: {
         order: orderSheetV2,
         user: ctx.state.session.metadata.user_id,
-        total: ctx.state.session.amount_total ? ctx.state.session.amount_total / 100 : 0
+        total: ctx.state.session.amount_total ? ctx.state.session.amount_total / 100 : 0,
+        stripe_session_id: ctx.state.session.id
       }
     });
 

@@ -103,6 +103,20 @@ namespace API {
     redirect: (url: string) => void;
     send: (data: any) => void;
   }
+
+  namespace Order {
+    interface Order {
+      id: string;
+      user: Auth.User;
+      order: string;
+      stripe_session_id: string;
+      total: number;
+    }
+
+    interface OrderQuery {
+      results: Order[];
+    }
+  }
   namespace Cart {
     interface Cart {
       monday: DaySheet;
@@ -115,10 +129,9 @@ namespace API {
     }
 
     interface StagedCart {
+      id: string;
       cart: CartDay[];
       user: Auth.User;
-      stripe_transaction_id: string;
-      total: number;
     }
 
     interface CartQuery {
