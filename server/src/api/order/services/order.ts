@@ -4,6 +4,7 @@
 
 import { factories } from '@strapi/strapi';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
+import globalUtils from '../../../utils/global';
 
 export default factories.createCoreService('api::order.order');
 
@@ -29,245 +30,6 @@ export const extraServices = {
       ctx.state.session.metadata.staged_cart_id,
       {}
     )) as API.Cart.StagedCart;
-
-    // stagedCart.cart.forEach((cart) => {
-    //   const lunchOrderEntries =
-    //     cart.lunches.length > 0
-    //       ? cart.dinners
-    //           .map((dinner) => {
-    //             const accommodateAllergies =
-    //               dinner?.accommodate_allergies.map((allergy) => allergy.type).length > 0
-    //                 ? dinner?.accommodate_allergies.map((allergy) => allergy.type)
-    //                 : 'None';
-    //             const omittedIngredients =
-    //               dinner?.omitted_ingredients.map((ingredient) => ingredient.name).length > 0
-    //                 ? dinner?.omitted_ingredients.map((ingredient) => ingredient.name)
-    //                 : 'None';
-
-    //             return `<tr>
-    //         <td>${dinner?.meal.title}</td>
-    //         <td>${dinner?.quantity}</td>
-    //         <td>${dinner?.protein_substitute?.title || 'None'}</td>
-    //         <td>${accommodateAllergies}</td>
-    //         <td>${omittedIngredients}</td>
-    //         </tr>`;
-    //           })
-    //           .join('')
-    //       : `<div></div>`;
-
-    //   const lunchOrders = `<table>
-    //     <thead>
-    //       <tr>
-    //         <th>Meal</th>
-    //         <th>Quantity</th>
-    //         <th>Protein Substitute</th>
-    //         <th>Accommodate Allergies</th>
-    //         <th>Omitted Ingredients</th>
-    //         </tr>
-    //         </thead>
-    //         <tbody>
-    //         ${lunchOrderEntries}
-    //         </tbody>
-    //         </table>`;
-
-    //   const dinnerOrderEntries =
-    //     cart.dinners.length > 0
-    //       ? cart.dinners
-    //           .map((dinner) => {
-    //             const accommodateAllergies =
-    //               dinner?.accommodate_allergies.map((allergy) => allergy.type).length > 0
-    //                 ? dinner?.accommodate_allergies.map((allergy) => allergy.type)
-    //                 : 'None';
-    //             const omittedIngredients =
-    //               dinner?.omitted_ingredients.map((ingredient) => ingredient.name).length > 0
-    //                 ? dinner?.omitted_ingredients.map((ingredient) => ingredient.name)
-    //                 : 'None';
-
-    //             return `<tr>
-    //         <td  style="border: 1px solid #000000;">${dinner?.meal.title}</td>
-    //         <td>${dinner?.quantity}</td>
-    //         <td>${dinner?.protein_substitute?.title || 'None'}</td>
-    //         <td>${accommodateAllergies}</td>
-    //         <td>${omittedIngredients}</td>
-    //         </tr>`;
-    //           })
-    //           .join('')
-    //       : `<div></div>`;
-
-    //   const dinnerOrders = `<table>
-    //     <thead>
-    //       <tr>
-    //         <th>Meal</th>
-    //         <th>Quantity</th>
-    //         <th>Protein Substitute</th>
-    //         <th>Accommodate Allergies</th>
-    //         <th>Omitted Ingredients</th>
-    //         </tr>
-    //         </thead>
-    //         <tbody>
-    //         ${dinnerOrderEntries}
-    //         </tbody>
-    //         </table>`;
-
-    //   const bundleOrderEntries =
-    //     cart.bundles.length > 0
-    //       ? cart.bundles
-    //           .map((bundle) => {
-    //             const lunchAccommodateAllergies =
-    //               bundle?.lunch_accommodate_allergies.map((allergy) => allergy.type).length > 0
-    //                 ? bundle?.lunch_accommodate_allergies.map((allergy) => allergy.type)
-    //                 : 'None';
-    //             const dinnerAccommodateAllergies =
-    //               bundle?.dinner_accommodate_allergies.map((allergy) => allergy.type).length > 0
-    //                 ? bundle?.dinner_accommodate_allergies.map((allergy) => allergy.type)
-    //                 : 'None';
-    //             const lunchOmittedIngredients =
-    //               bundle?.lunch_omitted_ingredients.map((ingredient) => ingredient.name).length > 0
-    //                 ? bundle?.lunch_omitted_ingredients.map((ingredient) => ingredient.name)
-    //                 : 'None';
-    //             const dinnerOmittedIngredients =
-    //               bundle?.dinner_omitted_ingredients.map((ingredient) => ingredient.name).length > 0
-    //                 ? bundle?.dinner_omitted_ingredients.map((ingredient) => ingredient.name)
-    //                 : 'None';
-
-    //             return `<tr>
-    //         <td>${bundle?.lunch?.title}</td>
-    //         <td>${bundle?.dinner?.title}</td>
-    //         <td>${bundle?.quantity}</td>
-    //         <td>${bundle?.lunch_protein_substitute?.title || 'None'}</td>
-    //         <td>${bundle?.dinner_protein_substitute?.title || 'None'}</td>
-    //         <td>${lunchAccommodateAllergies}</td>
-    //         <td>${dinnerAccommodateAllergies}</td>
-    //         <td>${lunchOmittedIngredients}</td>
-    //         <td>${dinnerOmittedIngredients}</td>
-    //         <td>${bundle?.bundle_snack?.title || 'None'}</td>
-    //         </tr>`;
-    //           })
-    //           .join('')
-    //       : `<div></div>`;
-
-    //   const bundleOrders = `<table>
-    //     <thead>
-    //       <tr>
-    //         <th>Lunch</th>
-    //         <th>Dinner</th>
-    //         <th>Quantity</th>
-    //         <th>Lunch Protein Substitute</th>
-    //         <th>Dinner Protein Substitute</th>
-    //         <th>Lunch Accommodate Allergies</th>
-    //         <th>Dinner Accommodate Allergies</th>
-    //         <th>Lunch Omitted Ingredients</th>
-    //         <th>Dinner Omitted Ingredients</th>
-    //         <th>Bundle Snack</th>
-    //         </tr>
-    //         </thead>
-    //         <tbody>
-    //         ${bundleOrderEntries}
-    //         </tbody>
-    //         </table>`;
-    //   const snackOrderEntries =
-    //     cart.snacks.length > 0
-    //       ? cart.snacks
-    //           .map((snack) => {
-    //             return `<tr><td>${snack?.snack?.title}</td><td>${snack?.quantity}</td></tr>`;
-    //           })
-    //           .join('')
-    //       : `<div></div>`;
-
-    //   const snackOrders = `<table>
-    //     <thead>
-    //       <tr>
-    //         <th>Snack</th>
-    //         <th>Quantity</th>
-    //         </tr>
-    //         </thead>
-    //         <tbody>
-    //         ${snackOrderEntries}
-    //         </tbody>
-    //         </table>`;
-
-    //   const saladOrderEntries =
-    //     cart.salads.length > 0
-    //       ? cart.salads
-    //           .map((salad) => {
-    //             const omittedIngredients =
-    //               salad?.omitted_ingredients.map((ingredient) => ingredient.name).length > 0
-    //                 ? salad?.omitted_ingredients.map((ingredient) => ingredient.name)
-    //                 : 'None';
-    //             return `<tr>
-    //         <td>${salad?.salad?.title}</td>
-    //         <td>${salad?.quantity}</td>
-    //         <td>${omittedIngredients}</td>
-    //         </tr>`;
-    //           })
-    //           .join('')
-    //       : `<div></div>`;
-    //   const saladOrders = `<table><thead>
-    //       <tr>
-    //         <th>Salad</th>
-    //         <th>Quantity</th>
-    //         <th>Omitted Ingredients</th>
-    //         </tr>
-    //         </thead>
-    //         <tbody>
-    //         ${saladOrderEntries}
-    //         </tbody>
-    //         </table>`;
-
-    //   if (cart.day === 'monday') {
-    //     mondayOrders = `<h2 style="text-align: center;">Monday</h2>
-    //     <h3>Lunches:</h3> ${lunchOrders || 'None'}<br><br><h3>Dinners:</h3> ${
-    //       dinnerOrders || 'None'
-    //     }<br><br><h3>Bundles:</h3> ${bundleOrders || 'None'}<br><br><h3>Snacks:</h3> ${
-    //       snackOrders || 'None'
-    //     }<br><br><h3>Salads:</h3> ${saladOrders || 'None'}<br><br>`;
-    //   }
-
-    //   if (cart.day === 'tuesday') {
-    //     tuesdayOrders = `<h2 style="text-align: center;">Tuesday</h2>
-    //     <h3>Lunches:</h3> ${lunchOrders || 'None'}<br><br><h3>Dinners:</h3> ${
-    //       dinnerOrders || 'None'
-    //     }<br><br><h3>Bundles:</h3> ${bundleOrders || 'None'}<br><br><h3>Snacks:</h3> ${
-    //       snackOrders || 'None'
-    //     }<br><br><h3>Salads:</h3> ${saladOrders || 'None'}<br><br>`;
-    //   }
-
-    //   if (cart.day === 'wednesday') {
-    //     wednesdayOrders = `<h2 style="text-align: center;">Wednesday</h2>
-    //     <h3>Lunches:</h3> ${lunchOrders || 'None'}<br><br><h3>Dinners:</h3> ${
-    //       dinnerOrders || 'None'
-    //     }<br><br><h3>Bundles:</h3> ${bundleOrders || 'None'}<br><br><h3>Snacks:</h3> ${
-    //       snackOrders || 'None'
-    //     }<br><br><h3>Salads:</h3> ${saladOrders || 'None'}<br><br>`;
-    //   }
-
-    //   if (cart.day === 'thursday') {
-    //     thursdayOrders = `<h2 style="text-align: center;">Thursday</h2>
-    //     <h3>Lunches:</h3> ${lunchOrders || 'None'}<br><br><h3>Dinners:</h3> ${
-    //       dinnerOrders || 'None'
-    //     }<br><br><h3>Bundles:</h3> ${bundleOrders || 'None'}<br><br><h3>Snacks:</h3> ${
-    //       snackOrders || 'None'
-    //     }<br><br><h3>Salads:</h3> ${saladOrders || 'None'}<br><br>`;
-    //   }
-
-    //   if (cart.day === 'friday') {
-    //     fridayOrders = `<h2 style="text-align: center;">Friday</h2>
-    //     <h3>Lunches:</h3> ${lunchOrders || 'None'}<br><br><h3>Dinners:</h3> ${
-    //       dinnerOrders || 'None'
-    //     }<br><br><h3>Bundles:</h3> ${bundleOrders || 'None'}<br><br><h3>Snacks:</h3> ${
-    //       snackOrders || 'None'
-    //     }<br><br><h3>Salads:</h3> ${saladOrders || 'None'}<br><br>`;
-    //   }
-    // });
-
-    // const orderSheet = `<h1>Order for ${ctx.state.session.metadata.user_email}</h1>
-    // <div>
-    // ${mondayOrders}
-    // ${tuesdayOrders}
-    // ${wednesdayOrders}
-    // ${thursdayOrders}
-    // ${fridayOrders}
-    // </div>`;
 
     let lunchBreakdowns,
       dinnerBreakdowns,
@@ -462,7 +224,7 @@ export const extraServices = {
         }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
       }
     });
-    const orderSheetV2 = `<div>
+    const orderSheet = `<div>
         <h2>Order Breakdown for ${ctx.state.session.metadata.user_email}</h2>
         <p>${user.first_name} ${user.last_name}<br>${user.street}<br>${user.city}<br>${user.state}<br>${
       user.zipcode
@@ -478,19 +240,21 @@ export const extraServices = {
 
     await orders.create!({
       data: {
-        order: orderSheetV2,
+        order: orderSheet,
         user: ctx.state.session.metadata.user_id,
         total: ctx.state.session.amount_total ? ctx.state.session.amount_total / 100 : 0,
         stripe_session_id: ctx.state.session.id
       }
     });
 
+    const nextMonday = globalUtils.getNextMonday();
+    const nextFriday = globalUtils.getNextFriday();
+
     process.env.DEVELOPMENT_TEST_EMAIL &&
       (await strapi.plugins['email'].services.email.send({
         to: process.env.DEVELOPMENT_TEST_EMAIL,
-        subject: 'Test Email',
-        text: 'Hello world!',
-        html: orderSheetV2
+        subject: `Order Breakdown for the week of ${nextMonday} - ${nextFriday}`,
+        html: orderSheet
       }));
   },
 

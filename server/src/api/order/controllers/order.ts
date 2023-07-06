@@ -14,6 +14,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
   const cartItemSalads = strapi.service('api::cart-item-salad.cart-item-salad') as GenericService;
   const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
   const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
+  const environment = process.env.NODE_ENV;
 
   return {
     async create(ctx: API.Context) {
@@ -211,10 +212,20 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
         }
       });
 
-      ctx.send('Order checkout success');
+      const response = {
+        message: 'Order checkout success'
+      };
+      try {
+        await extraServices.createOrder(ctx);
+        await extraServices.postOrderCleanup(ctx);
+      } catch (error) {
+        if (error instanceof Error) {
+          strapi.log.error(error.message);
+          return ctx.badRequest(error.message, { ...(environment === 'development' && { stack: error.stack }) });
+        }
+      }
 
-      extraServices.createOrder(ctx);
-      extraServices.postOrderCleanup(ctx);
+      ctx.send(response);
     }
   };
 });
