@@ -6,8 +6,7 @@ export default {
       path: '/orders/success',
       handler: 'order.onOrderCheckoutSuccess',
       config: {
-        auth: false,
-        middlewares: [middleware.validateCheckoutSession]
+        middlewares: [middleware.validateCheckoutSession, middleware.preventMultipleOnOrderSuccess]
       }
     }
   ]

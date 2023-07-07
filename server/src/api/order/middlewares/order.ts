@@ -83,5 +83,32 @@ export default {
     }
 
     await next();
+  },
+  async preventMultipleOnOrderSuccess(ctx: API.Context, next: NextFunction) {
+    const orders = strapi.service('api::order.order') as GenericService;
+    try {
+      if (!ctx.state.session) {
+        return ctx.badRequest('Session is not appended to state object');
+      }
+
+      const order = (await orders.find!({
+        filters: {
+          stripe_session_id: ctx.state.session.id
+        }
+      })) as API.Order.OrderQuery;
+
+      if (order.results.length > 0) {
+        return ctx.badRequest('You have already placed an order for the current order cycle');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, {
+          ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+        });
+      }
+    }
+
+    await next();
   }
 };
