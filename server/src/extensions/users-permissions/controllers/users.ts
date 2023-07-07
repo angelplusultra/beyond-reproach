@@ -112,7 +112,8 @@ export default {
           line1: sanitizedUser.street,
           city: sanitizedUser.city,
           postal_code: sanitizedUser.zipcode,
-          state: sanitizedUser.state
+          state: sanitizedUser.state,
+          country: 'US'
         },
         phone: sanitizedUser.mobile_number,
         metadata: {

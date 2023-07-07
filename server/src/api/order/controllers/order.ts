@@ -183,6 +183,9 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
             process.env.SERVER_BASE_URL || 'http://localhost:1337'
           }/api/orders/success?session_id={CHECKOUT_SESSION_ID}`,
           line_items: [...mealLineItems, ...bundleLineItems, ...snackLineItems, ...saladLineItems],
+          automatic_tax: {
+            enabled: true
+          },
           metadata: {
             user_id: ctx.state.user.id,
             user_email: ctx.state.user.email,
