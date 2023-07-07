@@ -265,22 +265,20 @@ export default {
         }
       });
 
-      {
-        await stripe.customers.update(ctx.state.user.stripe_customer_id, {
-          ...(ctx.request.body.street &&
-            ctx.request.body.city &&
-            ctx.request.body.zipcode && {
-              address: {
-                line1: ctx.request.body.street,
-                postal_code: ctx.request.body.zipcode,
-                city: ctx.request.body.city
-              }
-            }),
-          ...(ctx.request.body.mobile_number && {
-            phone: ctx.request.body.mobile_number
-          })
-        });
-      }
+      await stripe.customers.update(ctx.state.user.stripe_customer_id, {
+        ...(ctx.request.body.street &&
+          ctx.request.body.city &&
+          ctx.request.body.zipcode && {
+            address: {
+              line1: ctx.request.body.street,
+              postal_code: ctx.request.body.zipcode,
+              city: ctx.request.body.city
+            }
+          }),
+        ...(ctx.request.body.mobile_number && {
+          phone: ctx.request.body.mobile_number
+        })
+      });
     } catch (error) {
       if (error instanceof Error) {
         strapi.log.error(error.message);
