@@ -153,6 +153,7 @@ export default {
         jwt,
         user: sanitizedUser
       };
+      await services.createCartRelations(sanitizedUser);
 
       ctx.send(response);
     } catch (error) {
@@ -161,8 +162,6 @@ export default {
         return ctx.badRequest(error.message, { error });
       }
     }
-
-    services.createCartRelations(sanitizedUser);
   },
 
   async onMembershipCheckoutSuccess(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>) {
