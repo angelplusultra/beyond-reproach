@@ -41,6 +41,12 @@ namespace API {
       price: number;
       omittable_ingredients: Ingredient[];
     }
+
+    interface AddOn {
+      id: string;
+      title: string;
+      price: number;
+    }
   }
   interface Route {
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -117,6 +123,7 @@ namespace API {
       results: Order[];
     }
   }
+
   namespace Cart {
     interface Cart {
       monday: DaySheet;
@@ -161,6 +168,15 @@ namespace API {
     }
     interface CartItemMealQuery {
       results: CartItemMeal[];
+    }
+
+    interface CartItemAddOn {
+      id: string;
+      add_on: ContentType.AddOn;
+      quantity: number;
+      total: number;
+      cart_day: CartDay;
+      user: Auth.User;
     }
     interface CartItemSalad {
       id: string;
@@ -226,9 +242,7 @@ namespace API {
       lunch: ContentType.Meal;
       dinner: ContentType.Meal;
       quantity: number;
-
       total: number;
-
       bundle_snack: ContentType.Snack;
       lunch_protein_substitute: ContentType.Protein;
       dinner_protein_substitute: ContentType.Protein;
@@ -332,10 +346,6 @@ namespace API {
       zipcode?: string;
       mobile_number?: string;
     }
-  }
-
-  interface UpdateCartItemMealRequestBody {
-    mealItemId: string;
   }
 }
 
