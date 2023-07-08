@@ -5,25 +5,32 @@ import * as yup from 'yup';
 export default {
   async validateCartDayOwnsership(ctx: API.Context<API.Cart.CreateNewCartItemBundleRequestBody>, next: NextFunction) {
     const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
-    const subCart = await cartDays.findOne!(ctx.request.body.cart_day, {
-      populate: {
-        user: true,
-        lunches: true,
-        dinners: true,
-        bundles: true
+    try {
+      const subCart = await cartDays.findOne!(ctx.request.body.cart_day, {
+        populate: {
+          user: true,
+          lunches: true,
+          dinners: true,
+          bundles: true
+        }
+      });
+
+      if (!subCart) {
+        return ctx.badRequest('Sub Cart not found');
       }
-    });
 
-    if (!subCart) {
-      return ctx.badRequest('Sub Cart not found');
+      if (subCart.user?.id !== ctx.state.user.id) {
+        return ctx.badRequest('You are not owner of the provided Sub cart');
+      }
+
+      ctx.state.user.cartDay = subCart;
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
     }
-
-    if (subCart.user?.id !== ctx.state.user.id) {
-      return ctx.badRequest('You are not owner of the provided Sub cart');
-    }
-
-    ctx.state.user.cartDay = subCart;
-    return next();
+    await next();
   },
 
   async validateCreateRequestBodySchema(
@@ -61,29 +68,37 @@ export default {
         return ctx.badRequest(error.message);
       }
     }
-    return next();
+    await next();
   },
   async validateCartItemBundleOwnership(ctx: API.Context, next: NextFunction) {
     const bundleItemId = ctx.params.id;
 
     const bundleItems = strapi.service('api::cart-item-bundle.cart-item-bundle') as GenericService;
-    const bundleItem = await bundleItems.findOne!(bundleItemId, {
-      populate: {
-        user: true,
-        lunch: true,
-        dinner: true
+
+    try {
+      const bundleItem = await bundleItems.findOne!(bundleItemId, {
+        populate: {
+          user: true,
+          lunch: true,
+          dinner: true
+        }
+      });
+
+      if (!bundleItem) {
+        return ctx.badRequest('Bundle Item does not exist');
       }
-    });
+      if (bundleItem.user.id !== ctx.state.user.id) {
+        return ctx.badRequest('You are not the owner of the provided Bundle Item');
+      }
 
-    if (!bundleItem) {
-      return ctx.badRequest('Bundle Item does not exist');
+      ctx.state.bundleItem = bundleItem;
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
     }
-    if (bundleItem.user.id !== ctx.state.user.id) {
-      return ctx.badRequest('You are not the owner of the provided Bundle Item');
-    }
 
-    ctx.state.bundleItem = bundleItem;
-
-    return next();
+    await next();
   }
 };

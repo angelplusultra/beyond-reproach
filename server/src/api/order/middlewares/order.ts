@@ -49,37 +49,69 @@ export default {
     const mealItems = strapi.service('api::cart-item-meal.cart-item-meal') as GenericService;
     const bundleItems = strapi.service('api::cart-item-bundle.cart-item-bundle') as GenericService;
 
-    const meals = (await mealItems.find!({
-      filters: {
-        user: ctx.state.user.id
+    try {
+      const meals = (await mealItems.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartItemMealQuery;
+
+      const bundles = (await bundleItems.find!({
+        filters: {
+          user: ctx.state.user.id
+        }
+      })) as API.Cart.CartItemBundleQuery;
+
+      let mealCount = 0;
+
+      meals.results.forEach((meal) => {
+        mealCount += meal.quantity;
+      });
+
+      bundles.results.forEach((bundle) => {
+        mealCount += bundle.quantity * 2;
+      });
+
+      if (mealCount < 4) {
+        return ctx.badRequest('User must have at least 4 Meals or 2 Bundles in their cart to checkout');
       }
-    })) as API.Cart.CartItemMealQuery;
-
-    const bundles = (await bundleItems.find!({
-      filters: {
-        user: ctx.state.user.id
+    } catch (error) {
+      if (error instanceof Error) {
+        return ctx.badRequest(error.message, { ...(process.env.NODE_ENV === 'development' && { stack: error.stack }) });
       }
-    })) as API.Cart.CartItemBundleQuery;
-
-    let mealCount = 0;
-
-    meals.results.forEach((meal) => {
-      mealCount += meal.quantity;
-    });
-
-    bundles.results.forEach((bundle) => {
-      mealCount += bundle.quantity * 2;
-    });
-
-    if (mealCount < 4) {
-      return ctx.badRequest('User must have at least 4 Meals or 2 Bundles in their cart to checkout');
     }
-
     await next();
   },
   async preventOrder(ctx: API.Context, next: NextFunction) {
     if (ctx.state.user.placed_order === true) {
       return ctx.badRequest('You can only place one order per week');
+    }
+
+    await next();
+  },
+  async preventMultipleOnOrderSuccess(ctx: API.Context, next: NextFunction) {
+    const orders = strapi.service('api::order.order') as GenericService;
+    try {
+      if (!ctx.state.session) {
+        return ctx.badRequest('Session is not appended to state object');
+      }
+
+      const order = (await orders.find!({
+        filters: {
+          stripe_session_id: ctx.state.session.id
+        }
+      })) as API.Order.OrderQuery;
+
+      if (order.results.length > 0) {
+        return ctx.badRequest('You have already placed an order for the current order cycle');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, {
+          ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+        });
+      }
     }
 
     await next();

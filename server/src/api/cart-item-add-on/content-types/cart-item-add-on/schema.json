@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_item_add_ons",
+  "info": {
+    "singularName": "cart-item-add-on",
+    "pluralName": "cart-item-add-ons",
+    "displayName": "CartItemAddOn"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "add_on": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::add-on.add-on"
+    },
+    "total": {
+      "type": "decimal"
+    },
+    "cart_day": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cart-day.cart-day"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "quantity": {
+      "type": "integer"
+    }
+  }
+}

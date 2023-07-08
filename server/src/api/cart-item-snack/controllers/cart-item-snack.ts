@@ -10,6 +10,7 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
   const snacks = strapi.service('api::snack.snack') as GenericService;
   const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
   const carts = strapi.service('api::cart.cart') as GenericService;
+  const environment = process.env.NODE_ENV;
 
   return {
     /*
@@ -24,51 +25,55 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
         return ctx.badRequest('Day Cart must be appended to the state object');
       }
 
-      const snack = await snacks.findOne!(ctx.request.body.snack, {});
+      const day = cartDay.day[0].toUpperCase() + cartDay.day.slice(1);
 
-      if (!snack) {
-        return ctx.badRequest('No Snack exists with the provided Id');
+      try {
+        const snack = await snacks.findOne!(ctx.request.body.snack, {});
+
+        if (!snack) {
+          return ctx.badRequest('No Snack exists with the provided Id');
+        }
+
+        const newSnackItem: API.Cart.CartItemSalad = await snackItems.create!({
+          data: {
+            snack: ctx.request.body.snack,
+            quantity: ctx.request.body.quantity,
+            cart_day: ctx.request.body.cart_day,
+            user: ctx.state.user.id,
+            total: snack.price * ctx.request.body.quantity
+          }
+        });
+
+        await cartDays.update!(cartDay.id, {
+          data: {
+            snacks: [...cartDay.snacks, newSnackItem.id]
+          }
+        });
+
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
+          }
+        })) as API.Cart.CartQuery;
+
+        await carts.update!(myCart.results[0].id, {
+          data: {
+            total: myCart.results[0].total + newSnackItem.total
+          }
+        });
+
+        const response = {
+          message: `You have successfully added a new Salad Item to your cart for ${day}`,
+          ...(environment === 'development' && { snack_item: newSnackItem })
+        };
+
+        return ctx.send(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          strapi.log.error(error.message);
+          return ctx.badRequest(error.message, { error });
+        }
       }
-
-      const newSnackItem: API.Cart.CartItemSalad = await snackItems.create!({
-        data: {
-          snack: ctx.request.body.snack,
-          quantity: ctx.request.body.quantity,
-          cart_day: ctx.request.body.cart_day,
-          user: ctx.state.user.id,
-          total: snack.price * ctx.request.body.quantity
-        }
-      });
-
-      const updatedCartDay: API.Cart.CartDay = await cartDays.update!(cartDay.id, {
-        data: {
-          snacks: [...cartDay.snacks, newSnackItem.id]
-        },
-        populate: {
-          lunches: true,
-          dinners: true,
-          bundles: true,
-          salads: true,
-          snacks: true
-        }
-      });
-
-      const myCart = (await carts.find!({
-        filters: {
-          user: ctx.state.user.id
-        }
-      })) as API.Cart.CartQuery;
-
-      const updatedCart = await carts.update!(myCart.results[0].id, {
-        data: {
-          total: myCart.results[0].total + newSnackItem.total
-        }
-      });
-
-      return {
-        updatedCartDay,
-        updatedCart
-      };
     },
 
     /*
@@ -81,29 +86,39 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
       if (!snackItem) {
         return ctx.badRequest('No Snack Item is appended to ctx.state');
       }
-      const updatedSnackItem: API.Cart.CartItemSnack = await snackItems.update!(snackItem.id, {
-        data: {
-          quantity: snackItem.quantity + 1,
-          total: snackItem.snack.price * (snackItem.quantity + 1)
-        }
-      });
 
-      const myCart = (await carts.find!({
-        filters: {
-          user: ctx.state.user.id
-        }
-      })) as API.Cart.CartQuery;
+      try {
+        const updatedSnackItem: API.Cart.CartItemSnack = await snackItems.update!(snackItem.id, {
+          data: {
+            quantity: snackItem.quantity + 1,
+            total: snackItem.snack.price * (snackItem.quantity + 1)
+          }
+        });
 
-      const updatedCart = await carts.update!(myCart.results[0].id, {
-        data: {
-          total: myCart.results[0].total + snackItem.snack.price
-        }
-      });
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
+          }
+        })) as API.Cart.CartQuery;
 
-      return {
-        updatedSnackItem,
-        updatedCart
-      };
+        await carts.update!(myCart.results[0].id, {
+          data: {
+            total: myCart.results[0].total + snackItem.snack.price
+          }
+        });
+
+        const response = {
+          message: 'Snack item quantity has been incremented',
+          ...(environment === 'development' && { snack_item: updatedSnackItem })
+        };
+
+        return ctx.send(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          strapi.log.error(error.message);
+          return ctx.badRequest(error.message, { error });
+        }
+      }
     },
     /*
     @desc Deletes a Cart-Item-Snack entry or decrements the quantity of the Cart-Item-Snack entry
@@ -113,59 +128,67 @@ export default factories.createCoreController('api::cart-item-snack.cart-item-sn
 
     async delete(ctx: API.Context<null, API.Cart.CartItemDeleteRequestQuery>) {
       const snackItem = ctx.state.snackItem;
-      let message, updatedCart, updatedSnackItem;
+      let message, updatedSnackItem;
 
-      const myCart = (await carts.find!({
-        filters: {
-          user: ctx.state.user.id
-        }
-      })) as API.Cart.CartQuery;
-
-      const deleteAll = ctx.request.query.all;
-
-      if (deleteAll === 'true' && snackItem) {
-        updatedCart = await carts.update!(myCart.results[0].id, {
-          data: {
-            total: myCart.results[0].total - snackItem.total
+      try {
+        const myCart = (await carts.find!({
+          filters: {
+            user: ctx.state.user.id
           }
-        });
+        })) as API.Cart.CartQuery;
 
-        updatedSnackItem = await snackItems.delete!(snackItem.id as never, {});
+        const deleteAll = ctx.request.query.all;
 
-        message = 'Snack Item has been deleted';
-      } else {
-        if (snackItem && snackItem.quantity > 1) {
-          updatedSnackItem = await snackItems.update!(ctx.params.id, {
+        if (deleteAll === 'true' && snackItem) {
+          await carts.update!(myCart.results[0].id, {
             data: {
-              quantity: snackItem.quantity - 1,
-              total: snackItem.snack.price * (snackItem.quantity - 1)
+              total: myCart.results[0].total - snackItem.total
             }
           });
 
-          updatedCart = await carts.update!(myCart.results[0].id, {
-            data: {
-              total: myCart.results[0].total - snackItem.snack.price
-            }
-          });
+          updatedSnackItem = await snackItems.delete!(snackItem.id as never, {});
 
-          message = 'Snack item quantity has been decremented';
-        } else if (snackItem && snackItem.quantity === 1) {
-          await snackItems.delete!(snackItem.id as never, {});
+          message = 'Snack Item has been deleted';
+        } else {
+          if (snackItem && snackItem.quantity > 1) {
+            updatedSnackItem = await snackItems.update!(ctx.params.id, {
+              data: {
+                quantity: snackItem.quantity - 1,
+                total: snackItem.snack.price * (snackItem.quantity - 1)
+              }
+            });
 
-          updatedCart = await carts.update!(myCart.results[0].id, {
-            data: {
-              total: myCart.results[0].total - snackItem.snack.price
-            }
-          });
+            await carts.update!(myCart.results[0].id, {
+              data: {
+                total: myCart.results[0].total - snackItem.snack.price
+              }
+            });
 
-          message = 'Snack item has been deleted';
+            message = 'Snack item quantity has been decremented';
+          } else if (snackItem && snackItem.quantity === 1) {
+            updatedSnackItem = await snackItems.delete!(snackItem.id as never, {});
+
+            await carts.update!(myCart.results[0].id, {
+              data: {
+                total: myCart.results[0].total - snackItem.snack.price
+              }
+            });
+
+            message = 'Snack item has been deleted';
+          }
+        }
+        const response = {
+          message,
+          ...(environment === 'development' && { snack_item: updatedSnackItem })
+        };
+
+        return ctx.send(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          strapi.log.error(error.message);
+          return ctx.badRequest(error.message, { error });
         }
       }
-      return {
-        updatedCart,
-        updatedSnackItem,
-        message
-      };
     }
   };
 });

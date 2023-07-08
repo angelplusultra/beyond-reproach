@@ -93,7 +93,6 @@ export default {
       try {
         await getService('user').sendConfirmationEmail(sanitizedUser);
       } catch (err) {
-        // ! KEEP AN EYE ON THIS
         if (err instanceof Error) {
           throw new ApplicationError(err.message);
         }
@@ -104,57 +103,66 @@ export default {
 
     const jwt = getService('jwt').issue(_.pick(user, ['id']));
 
-    const customer = await stripe.customers.create({
-      email: sanitizedUser.email,
-      name: sanitizedUser.username,
-      address: {
-        line1: sanitizedUser.street,
-        city: sanitizedUser.city,
-        postal_code: sanitizedUser.zipcode,
-        state: sanitizedUser.state
-      },
-      phone: sanitizedUser.mobile_number,
-      metadata: {
-        user_id: sanitizedUser.id
-      }
-    });
-
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      customer: customer.id,
-      line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
-      payment_method_types: ['paypal', 'card'],
-      payment_method_collection: 'always',
-      discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
-      currency: 'USD',
-      success_url: `${
-        process.env.SERVER_BASE_URL || 'http://localhost:1337'
-      }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: 'http://localhost:1337',
-      metadata: {
-        user_id: sanitizedUser.id
-      }
-    });
     const users = strapi.db.query('plugin::users-permissions.user');
-    // TODO SESSION LINK AND JWT, FRONTEND WILL PUT JWT IN LS
+    try {
+      const customer = await stripe.customers.create({
+        email: sanitizedUser.email,
+        name: sanitizedUser.username,
+        address: {
+          line1: sanitizedUser.street,
+          city: sanitizedUser.city,
+          postal_code: sanitizedUser.zipcode,
+          state: sanitizedUser.state,
+          country: 'US'
+        },
+        phone: sanitizedUser.mobile_number,
+        metadata: {
+          user_id: sanitizedUser.id
+        }
+      });
 
-    ctx.send({
-      session,
-      customer,
-      sanitizedUser,
-      jwt
-    });
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        customer: customer.id,
+        line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
+        payment_method_types: ['paypal', 'card'],
+        payment_method_collection: 'always',
+        discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
+        currency: 'USD',
+        success_url: `${
+          process.env.SERVER_BASE_URL || 'http://localhost:1337'
+        }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: 'http://localhost:1337',
+        metadata: {
+          user_id: sanitizedUser.id
+        }
+      });
 
-    services.createCartRelations(sanitizedUser);
+      await users.update({
+        where: {
+          email: sanitizedUser.email
+        },
+        data: {
+          stripe_customer_id: customer.id
+        }
+      });
 
-    users.update({
-      where: {
-        email: sanitizedUser.email
-      },
-      data: {
-        stripe_customer_id: customer.id
+      const response = {
+        message: 'Your account has been successfully created!',
+        session_url: session.url,
+        session_id: session.id,
+        jwt,
+        user: sanitizedUser
+      };
+      await services.createCartRelations(sanitizedUser);
+
+      ctx.send(response);
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
       }
-    });
+    }
   },
 
   async onMembershipCheckoutSuccess(ctx: API.Context<null, API.Auth.MembershipCheckoutSuccessQuery>) {
@@ -164,73 +172,100 @@ export default {
       return ctx.badRequest('Stripe session is not attached to the state object');
     }
 
-    await users.update({
-      where: {
-        id: ctx.state.session.metadata.user_id
-      },
-      data: {
-        role: 3,
-        stripe_subscription_id: ctx.state.session.subscription
-      },
-      populate: { role: true }
-    });
-
-    // TODO REDIRECT USER BACK TO FRONTEND
+    try {
+      await users.update({
+        where: {
+          id: ctx.state.session.metadata.user_id
+        },
+        data: {
+          role: 3,
+          stripe_subscription_id: ctx.state.session.subscription
+        },
+        populate: { role: true }
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
+    }
 
     return ctx.redirect('https://google.com');
   },
   async becomeMember(ctx: API.Context) {
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      customer: ctx.state.user.stripe_customer_id,
-      line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
-      payment_method_types: ['paypal', 'card'],
-      discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
-      currency: 'USD',
-      success_url: `${
-        process.env.SERVER_BASE_URL || 'http://localhost:1337'
-      }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: 'http://localhost:1337',
-      metadata: {
-        user_id: ctx.state.user.id
-      }
-    });
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        customer: ctx.state.user.stripe_customer_id,
+        line_items: [{ price: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_PRICE_ID, quantity: 1 }],
+        payment_method_types: ['paypal', 'card'],
+        discounts: [{ coupon: process.env.STRIPE_TEST_MEMBERSHIP_PLAN_DISCOUNT_ID }],
+        currency: 'USD',
+        success_url: `${
+          process.env.SERVER_BASE_URL || 'http://localhost:1337'
+        }/api/auth/membership/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: 'http://localhost:1337',
+        metadata: {
+          user_id: ctx.state.user.id
+        }
+      });
 
-    ctx.send(session);
+      const response = {
+        message: 'A checkout session for membership has been succesfully created',
+        session_url: session.url
+      };
+
+      ctx.send(response);
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
+    }
   },
   async unsubscribe(ctx: API.Context) {
     const users = strapi.db.query('plugin::users-permissions.user');
 
-    await stripe.subscriptions.cancel(ctx.state.user.stripe_subscription_id);
+    try {
+      await stripe.subscriptions.cancel(ctx.state.user.stripe_subscription_id);
 
-    await users.update({
-      where: {
-        id: ctx.state.user.id
-      },
-      data: {
-        role: 1
-      },
-      populate: { role: true }
-    });
+      await users.update({
+        where: {
+          id: ctx.state.user.id
+        },
+        data: {
+          role: 1
+        },
+        populate: { role: true }
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
+    }
 
-    ctx.send('You have been successfully unsubscribed!');
+    const response = {
+      message: 'You have been successfully unsubscribed!'
+    };
+
+    ctx.send(response);
   },
   async updateMe(ctx: API.Context<API.Auth.UpdateMeRequestBody>) {
     const users = strapi.db.query('plugin::users-permissions.user');
+    try {
+      await users.update({
+        where: {
+          id: ctx.state.user.id
+        },
+        data: {
+          ...(ctx.request.body.mobile_number && { mobile_number: ctx.request.body.mobile_number }),
+          ...(ctx.request.body.street && { street: ctx.request.body.street }),
+          ...(ctx.request.body.city && { city: ctx.request.body.city }),
+          ...(ctx.request.body.zipcode && { zipcode: ctx.request.body.zipcode })
+        }
+      });
 
-    await users.update({
-      where: {
-        id: ctx.state.user.id
-      },
-      data: {
-        ...(ctx.request.body.mobile_number && { mobile_number: ctx.request.body.mobile_number }),
-        ...(ctx.request.body.street && { street: ctx.request.body.street }),
-        ...(ctx.request.body.city && { city: ctx.request.body.city }),
-        ...(ctx.request.body.zipcode && { zipcode: ctx.request.body.zipcode })
-      }
-    });
-
-    {
       await stripe.customers.update(ctx.state.user.stripe_customer_id, {
         ...(ctx.request.body.street &&
           ctx.request.body.city &&
@@ -245,9 +280,15 @@ export default {
           phone: ctx.request.body.mobile_number
         })
       });
+    } catch (error) {
+      if (error instanceof Error) {
+        strapi.log.error(error.message);
+        return ctx.badRequest(error.message, { error });
+      }
     }
-
-    ctx.send('Your info has been succesfully updated!');
-  },
-  async updateAddress() {}
+    const response = {
+      message: 'Your info has been succesfully updated!'
+    };
+    return ctx.send(response);
+  }
 };
