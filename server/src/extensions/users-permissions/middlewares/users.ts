@@ -15,10 +15,10 @@ export default {
 
     if (userMobileNumber) {
       try {
-        const phoneNumber = phoneUtil.parse(userMobileNumber);
+        const phoneNumber = phoneUtil.parse(userMobileNumber, 'US');
 
-        if (!phoneUtil.isValidNumber(phoneNumber)) {
-          return ctx.badRequest('Please provide a valid mobile number.');
+        if (!phoneUtil.isValidNumberForRegion(phoneNumber, 'US')) {
+          return ctx.badRequest('Please provide a valid US mobile number.');
         }
 
         const formattedMobileNumber = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
