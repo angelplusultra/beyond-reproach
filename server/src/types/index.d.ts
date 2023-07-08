@@ -41,6 +41,13 @@ namespace API {
       price: number;
       omittable_ingredients: Ingredient[];
     }
+    interface Menu {
+      id: number;
+      release_date: string;
+    }
+    interface MenuQuery {
+      results: Menu[];
+    }
   }
   interface Route {
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -183,14 +190,6 @@ namespace API {
 
     interface CartDayQuery {
       results: CartDay[];
-    }
-
-    interface Menu {
-      id: number;
-      release_date: string;
-    }
-    interface MenuQuery {
-      results: Menu[];
     }
 
     interface CreateNewCartItemSnackRequestBody {
