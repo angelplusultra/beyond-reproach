@@ -42,10 +42,19 @@ namespace API {
       omittable_ingredients: Ingredient[];
     }
 
+    interface Menu {
+      id: number;
+      release_date: string;
+    }
+    interface MenuQuery {
+      results: Menu[];
+    }
+
     interface AddOn {
       id: string;
       title: string;
       price: number;
+
     }
   }
   interface Route {
