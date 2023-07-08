@@ -59,6 +59,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "add_ons": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item-add-on.cart-item-add-on"
     }
   }
 }

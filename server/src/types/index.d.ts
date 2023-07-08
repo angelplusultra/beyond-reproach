@@ -102,6 +102,7 @@ namespace API {
       mealItem?: Cart.CartItemMeal;
       saladItem?: Cart.CartItemSalad;
       snackItem?: Cart.CartItemSnack;
+      addOnItem?: Cart.CartItemAddOn;
       session?: import('stripe').Stripe.Response<import('stripe').Stripe.Checkout.Session>;
     };
     badRequest: (message: string, details?: object) => void;
@@ -178,6 +179,17 @@ namespace API {
       cart_day: CartDay;
       user: Auth.User;
     }
+
+    interface CartItemAddOnQuery {
+      results: CartItemAddOn[];
+    }
+
+    interface CreateNewCartItemAddOnRequestBody {
+      add_on: string;
+      quantity: number;
+      cart_day: CartDay['id'];
+    }
+
     interface CartItemSalad {
       id: string;
       salad: ContentType.Salad;
@@ -264,6 +276,7 @@ namespace API {
       bundles: CartItemBundle[];
       salads: CartItemSalad[];
       snacks: CartItemSnack[];
+      add_ons: CartItemAddOn[];
       day: Day;
       user?: Auth.User;
     }
