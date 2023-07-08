@@ -185,6 +185,14 @@ namespace API {
       results: CartDay[];
     }
 
+    interface Menu {
+      id: number;
+      release_date: string;
+    }
+    interface MenuQuery {
+      results: Menu[];
+    }
+
     interface CreateNewCartItemSnackRequestBody {
       snack: string;
       quantity: number;
