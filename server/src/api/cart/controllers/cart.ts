@@ -56,7 +56,8 @@ export default factories.createCoreController('api::cart.cart', ({ strapi }) => 
                     salad: true,
                     omitted_ingredients: true
                   }
-                }
+                },
+                add_ons: true
               }
             }
           }
