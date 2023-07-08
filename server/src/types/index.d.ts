@@ -54,7 +54,6 @@ namespace API {
       id: string;
       title: string;
       price: number;
-
     }
   }
   interface Route {
