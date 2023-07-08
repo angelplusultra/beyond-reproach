@@ -354,6 +354,13 @@ export const extraServices = {
       .query('api::cart-item-salad.cart-item-salad')
       .deleteMany({ where: { id: { $in: toDeleteCartItemSalad.map(({ id }) => id) } } });
 
+    const toDeleteCartItemAddOn = await strapi.db
+      .query('api::cart-item-add-on.cart-item-add-on')
+      .findMany({ where: { user: ctx.state.session.metadata.user_id } });
+    await strapi.db
+      .query('api::cart-item-add-on.cart-item-add-on')
+      .deleteMany({ where: { id: { $in: toDeleteCartItemAddOn.map(({ id }) => id) } } });
+
     await strapi.db.query('api::cart.cart').update({
       where: { user: ctx.state.session.metadata.user_id },
       data: {
