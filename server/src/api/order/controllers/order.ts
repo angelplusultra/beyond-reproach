@@ -66,7 +66,11 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                 omitted_ingredients: true
               }
             },
-            addOns: true
+            add_ons: {
+              populate: {
+                add_on: true
+              }
+            }
           }
         })) as API.Cart.CartDayQuery;
 
