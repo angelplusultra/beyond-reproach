@@ -68,7 +68,7 @@ export const extraServices = {
                 </div><br/><br/>`;
               })
               .join('')
-          : ``;
+          : `<div></div>`;
 
       dinnerBreakdowns =
         cart.dinners.length > 0
@@ -99,7 +99,7 @@ export const extraServices = {
                 </div><br/><br/>`;
               })
               .join('')
-          : ``;
+          : `<div></div>`;
 
       bundleBreakdowns =
         cart.bundles.length > 0
@@ -151,7 +151,7 @@ export const extraServices = {
                 </div><br/><br/>`;
               })
               .join('')
-          : ``;
+          : `<div></div>`;
 
       snackBreakdowns =
         cart.snacks.length > 0
@@ -164,7 +164,7 @@ export const extraServices = {
                 </div><br/><br/>`;
               })
               .join('')
-          : ``;
+          : `<div></div>`;
 
       saladBreakdowns =
         cart.salads.length > 0
@@ -184,7 +184,7 @@ export const extraServices = {
                 </div><br/><br/>`;
               })
               .join('')
-          : ``;
+          : `<div></div>`;
 
       addOnBreakdowns =
         cart.add_ons.length > 0
@@ -197,52 +197,52 @@ export const extraServices = {
                     </div><br/><br/>`;
               })
               .join('')
-          : ``;
+          : `<div></div>`;
 
       if (cart.day === 'monday') {
-        mondayBreakdowns = `<div><h2>Monday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
-          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
-        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
-          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
-          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
-        }</div>`;
+        mondayBreakdowns = `<div><h2>Monday</h2>${
+          lunchBreakdowns !== '<div></div>' ? `<h3>Lunches:</h3> ${lunchBreakdowns}` : '<div></div>'
+        }${dinnerBreakdowns !== '<div></div>' ? `<h3>Dinners:</h3> ${dinnerBreakdowns}` : '<div></div>'}${
+          bundleBreakdowns !== '<div></div>' ? `<h3>Bundles:</h3> ${bundleBreakdowns}` : '<div></div>'
+        }${snackBreakdowns !== '<div></div>' ? `<h3>Snacks:</h3> ${snackBreakdowns}` : '<div></div>'}${
+          saladBreakdowns !== '<div></div>' ? `<h3>Salads:</h3> ${saladBreakdowns}` : '<div></div>'
+        }${addOnBreakdowns !== '<div></div>' ? `<h3>Add Ons:</h3> ${addOnBreakdowns}` : '<div></div>'}</div>`;
       }
       if (cart.day === 'tuesday') {
-        tuesdayBreakdowns = `<div><h2>Tuesday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
-          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
-        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
-          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
-          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
-        }</div>`;
+        tuesdayBreakdowns = `<div><h2>Tuesday</h2>${
+          lunchBreakdowns !== '<div></div>' ? `<h3>Lunches:</h3> ${lunchBreakdowns}` : '<div></div>'
+        }${dinnerBreakdowns !== '<div></div>' ? `<h3>Dinners:</h3> ${dinnerBreakdowns}` : '<div></div>'}${
+          bundleBreakdowns !== '<div></div>' ? `<h3>Bundles:</h3> ${bundleBreakdowns}` : '<div></div>'
+        }${snackBreakdowns !== '<div></div>' ? `<h3>Snacks:</h3> ${snackBreakdowns}` : '<div></div>'}${
+          saladBreakdowns !== '<div></div>' ? `<h3>Salads:</h3> ${saladBreakdowns}` : '<div></div>'
+        }${addOnBreakdowns !== '<div></div>' ? `<h3>Add Ons:</h3> ${addOnBreakdowns}` : '<div></div>'}</div>`;
       }
       if (cart.day === 'wednesday') {
-        wednesdayBreakdowns = `<div><h2>Wednesday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
-          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
-        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
-          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
-          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
-        }</div>`;
+        wednesdayBreakdowns = `<div><h2>Wednesday</h2>${
+          lunchBreakdowns !== '<div></div>' ? `<h3>Lunches:</h3> ${lunchBreakdowns}` : '<div></div>'
+        }${dinnerBreakdowns !== '<div></div>' ? `<h3>Dinners:</h3> ${dinnerBreakdowns}` : '<div></div>'}${
+          bundleBreakdowns !== '<div></div>' ? `<h3>Bundles:</h3> ${bundleBreakdowns}` : '<div></div>'
+        }${snackBreakdowns !== '<div></div>' ? `<h3>Snacks:</h3> ${snackBreakdowns}` : '<div></div>'}${
+          saladBreakdowns !== '<div></div>' ? `<h3>Salads:</h3> ${saladBreakdowns}` : '<div></div>'
+        }${addOnBreakdowns !== '<div></div>' ? `<h3>Add Ons:</h3> ${addOnBreakdowns}` : '<div></div>'}</div>`;
       }
       if (cart.day === 'thursday') {
-        thursdayBreakdowns = `<div><h2>Thursday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
-          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
-        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
-          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
-          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
-        }</div>`;
+        thursdayBreakdowns = `<div><h2>Thursday</h2>${
+          lunchBreakdowns !== '<div></div>' ? `<h3>Lunches:</h3> ${lunchBreakdowns}` : '<div></div>'
+        }${dinnerBreakdowns !== '<div></div>' ? `<h3>Dinners:</h3> ${dinnerBreakdowns}` : '<div></div>'}${
+          bundleBreakdowns !== '<div></div>' ? `<h3>Bundles:</h3> ${bundleBreakdowns}` : '<div></div>'
+        }${snackBreakdowns !== '<div></div>' ? `<h3>Snacks:</h3> ${snackBreakdowns}` : '<div></div>'}${
+          saladBreakdowns !== '<div></div>' ? `<h3>Salads:</h3> ${saladBreakdowns}` : '<div></div>'
+        }${addOnBreakdowns !== '<div></div>' ? `<h3>Add Ons:</h3> ${addOnBreakdowns}` : '<div></div>'}</div>`;
       }
       if (cart.day === 'friday') {
-        fridayBreakdowns = `<div><h2>Friday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
-          dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
-        }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
-          snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
-          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
-        }</div>`;
+        fridayBreakdowns = `<div><h2>Friday</h2>${
+          lunchBreakdowns !== '<div></div>' ? `<h3>Lunches:</h3> ${lunchBreakdowns}` : '<div></div>'
+        }${dinnerBreakdowns !== '<div></div>' ? `<h3>Dinners:</h3> ${dinnerBreakdowns}` : '<div></div>'}${
+          bundleBreakdowns !== '<div></div>' ? `<h3>Bundles:</h3> ${bundleBreakdowns}` : '<div></div>'
+        }${snackBreakdowns !== '<div></div>' ? `<h3>Snacks:</h3> ${snackBreakdowns}` : '<div></div>'}${
+          saladBreakdowns !== '<div></div>' ? `<h3>Salads:</h3> ${saladBreakdowns}` : '<div></div>'
+        }${addOnBreakdowns !== '<div></div>' ? `<h3>Add Ons:</h3> ${addOnBreakdowns}` : '<div></div>'}</div>`;
       }
     });
     const orderSheet = `<div>
