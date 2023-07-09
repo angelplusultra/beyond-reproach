@@ -4,7 +4,6 @@
 
 import { factories } from '@strapi/strapi';
 import { GenericService } from '@strapi/strapi/lib/core-api/service';
-import globalUtils from '../../../utils/global';
 
 export default factories.createCoreService('api::order.order');
 
@@ -246,16 +245,6 @@ export const extraServices = {
         stripe_session_id: ctx.state.session.id
       }
     });
-
-    const nextMonday = globalUtils.getNextMonday();
-    const nextFriday = globalUtils.getNextFriday();
-
-    process.env.DEVELOPMENT_TEST_EMAIL &&
-      (await strapi.plugins['email'].services.email.send({
-        to: process.env.DEVELOPMENT_TEST_EMAIL,
-        subject: `Order Breakdown for the week of ${nextMonday} - ${nextFriday}`,
-        html: orderSheet
-      }));
   },
 
   async updateStagedCart(ctx: API.Context, stagedCartId: string) {

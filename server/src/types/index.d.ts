@@ -7,6 +7,13 @@ namespace API {
   type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
   type MealType = 'lunch' | 'dinner';
 
+  interface Event<ContentType> {
+    params: {
+      data: ContentType;
+    };
+    result: ContentType;
+  }
+
   namespace ContentType {
     interface Meal {
       id: number;
@@ -54,7 +61,6 @@ namespace API {
       id: string;
       title: string;
       price: number;
-
     }
   }
   interface Route {
