@@ -192,7 +192,7 @@ export const extraServices = {
               .map((addOn, i) => {
                 return `<div>
                     ${i + 1}.
-                      <div>Add on: ${addOn?.add_on?.title}</div>
+                      <div>Add On: ${addOn?.add_on?.title}</div>
                       <div>Quantity: ${addOn?.quantity}</div>
                     </div><br/><br/>`;
               })

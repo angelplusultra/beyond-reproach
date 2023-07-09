@@ -226,7 +226,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
         ctx.send({
           session_url: session.url,
           session_id: session.id,
-          message: 'Order is being processed'
+          message: 'A checkout session has been created'
         });
       } catch (error) {
         if (error instanceof Error) {
