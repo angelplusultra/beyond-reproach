@@ -35,6 +35,7 @@ export const extraServices = {
       bundleBreakdowns,
       snackBreakdowns,
       saladBreakdowns,
+      addOnBreakdowns,
       mondayBreakdowns,
       tuesdayBreakdowns,
       wednesdayBreakdowns,
@@ -187,40 +188,63 @@ export const extraServices = {
               .join('')
           : ``;
 
+      addOnBreakdowns =
+        cart.add_ons.length > 0
+          ? cart.add_ons
+              .map((addOn, i) => {
+                return `<div>
+                    ${i + 1}.
+                      <div>Add on: ${addOn?.add_on?.title}</div>
+                      <div>Quantity: ${addOn?.quantity}</div>
+                    </div><br/><br/>`;
+              })
+              .join('')
+          : ``;
+
       if (cart.day === 'monday') {
         mondayBreakdowns = `<div><h2>Monday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
           dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
         }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
           snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
+          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
+        }</div>`;
       }
       if (cart.day === 'tuesday') {
         tuesdayBreakdowns = `<div><h2>Tuesday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
           dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
         }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
           snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
+          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
+        }</div>`;
       }
       if (cart.day === 'wednesday') {
         wednesdayBreakdowns = `<div><h2>Wednesday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
           dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
         }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
           snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
+          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
+        }</div>`;
       }
       if (cart.day === 'thursday') {
         thursdayBreakdowns = `<div><h2>Thursday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
           dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
         }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
           snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
+          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
+        }</div>`;
       }
       if (cart.day === 'friday') {
         fridayBreakdowns = `<div><h2>Friday</h2>${lunchBreakdowns && `<h3>Lunches:</h3> ${lunchBreakdowns}`}${
           dinnerBreakdowns && `<h3>Dinners:</h3> ${dinnerBreakdowns}`
         }${bundleBreakdowns && `<h3>Bundles:</h3> ${bundleBreakdowns}`}${
           snackBreakdowns && `<h3>Snacks:</h3> ${snackBreakdowns}`
-        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}</div>`;
+        }${saladBreakdowns && `<h3>Salads:</h3> ${saladBreakdowns}`}${
+          addOnBreakdowns && `<h3>Add Ons:</h3> ${addOnBreakdowns}`
+        }</div>`;
       }
     });
     const orderSheet = `<div>
@@ -342,6 +366,13 @@ export const extraServices = {
     await strapi.db
       .query('api::cart-item-salad.cart-item-salad')
       .deleteMany({ where: { id: { $in: toDeleteCartItemSalad.map(({ id }) => id) } } });
+
+    const toDeleteCartItemAddOn = await strapi.db
+      .query('api::cart-item-add-on.cart-item-add-on')
+      .findMany({ where: { user: ctx.state.session.metadata.user_id } });
+    await strapi.db
+      .query('api::cart-item-add-on.cart-item-add-on')
+      .deleteMany({ where: { id: { $in: toDeleteCartItemAddOn.map(({ id }) => id) } } });
 
     await strapi.db.query('api::cart.cart').update({
       where: { user: ctx.state.session.metadata.user_id },

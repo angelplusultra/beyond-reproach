@@ -12,6 +12,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
   const cartItemBundles = strapi.service('api::cart-item-bundle.cart-item-bundle') as GenericService;
   const cartItemSnacks = strapi.service('api::cart-item-snack.cart-item-snack') as GenericService;
   const cartItemSalads = strapi.service('api::cart-item-salad.cart-item-salad') as GenericService;
+  const cartItemAddOns = strapi.service('api::cart-item-add-on.cart-item-add-on') as GenericService;
   const cartDays = strapi.service('api::cart-day.cart-day') as GenericService;
   const stagedCarts = strapi.service('api::staged-cart.staged-cart') as GenericService;
   const environment = process.env.NODE_ENV;
@@ -64,6 +65,11 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
                 salad: true,
                 omitted_ingredients: true
               }
+            },
+            add_ons: {
+              populate: {
+                add_on: true
+              }
             }
           }
         })) as API.Cart.CartDayQuery;
@@ -112,6 +118,15 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
           }
         })) as API.Cart.CartItemSaladQuery;
 
+        const addOnItems = (await cartItemAddOns.find!({
+          filters: {
+            user: ctx.state.user.id
+          },
+          populate: {
+            add_on: true
+          }
+        })) as API.Cart.CartItemAddOnQuery;
+
         const bundleLineItems = bundleItems.results.map((bundleItem: API.Cart.CartItemBundle) => {
           const lunchUnit = Math.round(bundleItem.lunch.price * 100);
           const dinnerUnit = Math.round(bundleItem.dinner.price * 100);
@@ -156,6 +171,21 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
             quantity: saladItem.quantity
           };
         });
+
+        const addOnLineItems = addOnItems.results.map((addOnItem: API.Cart.CartItemAddOn) => {
+          const unit = Math.round(addOnItem.add_on.price * 100);
+
+          return {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: addOnItem.add_on.title
+              },
+              unit_amount: unit
+            },
+            quantity: addOnItem.quantity
+          };
+        });
         const mealLineItems = mealItems.results.map((mealItem: API.Cart.CartItemMeal) => {
           // Example decimal unit amount
           const unit = Math.round(mealItem.meal.price * 100);
@@ -182,7 +212,7 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
           success_url: `${
             process.env.SERVER_BASE_URL || 'http://localhost:1337'
           }/api/orders/success?session_id={CHECKOUT_SESSION_ID}`,
-          line_items: [...mealLineItems, ...bundleLineItems, ...snackLineItems, ...saladLineItems],
+          line_items: [...mealLineItems, ...bundleLineItems, ...snackLineItems, ...saladLineItems, ...addOnLineItems],
           automatic_tax: {
             enabled: true
           },
