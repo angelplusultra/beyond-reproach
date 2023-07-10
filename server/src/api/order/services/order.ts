@@ -63,7 +63,9 @@ export const extraServices = {
                       : '<div></div>'
                   }
                   ${
-                    lunch?.omitted_ingredients.length > 0 ? `<div>Omitted Ingredients: ${omittedIngredients}</div>` : ''
+                    lunch?.omitted_ingredients.length > 0
+                      ? `<div>Omitted Ingredients: ${omittedIngredients}</div>`
+                      : '<div></div>'
                   }
                 </div><br/><br/>`;
               })
