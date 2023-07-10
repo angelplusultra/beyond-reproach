@@ -149,7 +149,11 @@ export const extraServices = {
                       ? `<div>Dinner Omitted Ingredients: ${dinnerOmittedIngredients}</div>`
                       : '<div></div>'
                   }
-                  ${bundle?.bundle_snack?.title ? `<div>Bundle Snack: ${bundle?.bundle_snack?.title}</div>` : ''}
+                  ${
+                    bundle?.bundle_snack?.title
+                      ? `<div>Bundle Snack: ${bundle?.bundle_snack?.title}</div>`
+                      : '<div></div>'
+                  }
                 </div><br/><br/>`;
               })
               .join('')
