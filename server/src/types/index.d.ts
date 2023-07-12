@@ -379,3 +379,33 @@ namespace API {
 
 declare module '@strapi/plugin-users-permissions/server/controllers/validation/auth';
 declare module '*.png';
+
+declare module 'shipday/integration' {
+  export default class ShipDay {
+    constructor(apiKey: string, timeout: number);
+
+    orderService: {
+      insertOrder(order: any): Promise<any>;
+    };
+  }
+}
+
+declare module 'shipday/integration/order/request/order.info.request' {
+  export default class OrderInfoRequest {
+    // Define the properties and methods of the OrderInfoRequest class
+    constructor(
+      orderId: string,
+      customerName: string,
+      customerAddress: string,
+      customerEmail: string,
+      customerPhone: string,
+      restaurauntName: string,
+      restaurauntAddress: string
+    );
+
+    setDeliveryInstruction(instructions: string): OrderInfoRequest;
+    setExpectedDeliveryDate(date: string): OrderInfoRequest;
+    setExpectedPickupTime(time: string): OrderInfoRequest;
+    setExpectedDeliveryTime(time: string): OrderInfoRequest;
+  }
+}

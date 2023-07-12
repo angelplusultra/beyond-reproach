@@ -31,6 +31,7 @@
     "google-libphonenumber": "^3.2.32",
     "moment-timezone": "^0.5.43",
     "pg": "8.8.0",
+    "shipday": "^1.1.0",
     "strapi-plugin-wysiwyg-react-md-editor": "^4.3.0",
     "stripe": "^12.9.0",
     "twilio": "^4.13.0",
